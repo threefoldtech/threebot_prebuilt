@@ -1,0 +1,3 @@
+#!/bin/sh
+
+LUAROCKS_SYSCONFDIR='/sandbox/openresty/luarocks/etc/luarocks' exec '/sandbox/openresty/luajit/bin/luajit' -e 'package.path="/sandbox/openresty/luarocks/share/lua/5.1/?.lua;/sandbox/openresty/luarocks/share/lua/5.1/?/init.lua;"..package.path;package.cpath="/sandbox/openresty/luarocks/lib/lua/5.1/?.so;"..package.cpath;local k,l,_=pcall(require,"luarocks.loader") _=k and l.add_context("lua-cjson","2.1.0.6-1")' '/sandbox/openresty/luarocks/lib/luarocks/rocks-5.1/lua-cjson/2.1.0.6-1/bin/lua2json' "$@"

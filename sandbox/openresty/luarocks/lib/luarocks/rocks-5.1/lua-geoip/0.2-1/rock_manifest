@@ -1,0 +1,13 @@
+rock_manifest = {
+   doc = {
+      ["README.md"] = "96f09fc0d0c6c2cefbdb298993730e7f"
+   },
+   lib = {
+      geoip = {
+         ["city.so"] = "d690a8596d67c3b3cc172ad31a7daae6",
+         ["country.so"] = "8fa09716c0fa7f5e3a20b7ff7e40b42c"
+      },
+      ["geoip.so"] = "2ecca55bf4d210d3f2bf6be513603299"
+   },
+   ["lua-geoip-0.2-1.rockspec"] = "80ee9581d2497c29acda23173030487d"
+}

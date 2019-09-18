@@ -1,0 +1,20 @@
+
+@url = tfgrid.reservation.statsaggregator.1
+#ipaddress of redis aggregator, can be hostname or ipaddr, string for now
+addr = (S)
+port = (I)
+secret = (S)
+
+#json representation of whatever needs to come back from the ZOS after provisioning
+@url = tfgrid.reservation.result.1
+category = "zdb,container,network,volume" (E)
+#unique id inside this reservation, autoincrement inside object
+workload_id = (I)
+data_json = (S)
+#signature of the data (is e.g. json) by the zos node who deployed
+signature = (bytes)
+state = "error,ok" (E)
+message = ""
+epoch = (D)
+
+

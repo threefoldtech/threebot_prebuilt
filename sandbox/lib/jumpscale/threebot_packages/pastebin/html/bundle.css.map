@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "file": "bundle.css",
+  "sources": [
+    "../src/Navigation.svelte"
+  ],
+  "sourcesContent": [
+    "<script>\n\t// import active from 'svelte-spa-router/active';\n\t// import {\n\t// \tlink,\n\t// \tpush,\n\t// \tpop,\n\t// \treplace,\n\t// \tlocation,\n\t// \tquerystring,\n\t// } from 'svelte-spa-router';\n</script>\n\n<style>\n\t/* Style for \"active\" links; need to mark this :global because the router adds the class directly */\n\t:global(a.my-active) {\n\t\tcolor: #9d9d9d !important;\n\t}\n</style>\n\n<div>\n\t<nav class=\"navbar navbar-expand-lg navbar navbar-dark bg-dark\">\n\t\t<a class=\"navbar-brand\" href=\"#\">Sharable Highlited Code</a>\n\t\t<button\n\t\t\tclass=\"navbar-toggler\"\n\t\t\ttype=\"button\"\n\t\t\tdata-toggle=\"collapse\"\n\t\t\tdata-target=\"#navbarText\"\n\t\t\taria-controls=\"navbarText\"\n\t\t\taria-expanded=\"false\"\n\t\t\taria-label=\"Toggle navigation\">\n\t\t\t<span class=\"navbar-toggler-icon\" />\n\t\t</button>\n\t\t<div class=\"collapse navbar-collapse\" id=\"navbarText\">\n\t\t\t<ul class=\"navbar-nav mr-auto\">\n\t\t\t\t<li class=\"nav-item active\">\n\t\t\t\t\t<a class=\"nav-link\" href=\"/\">\n\t\t\t\t\t\tHome\n\t\t\t\t\t\t<span class=\"sr-only\">(current)</span>\n\t\t\t\t\t</a>\n\t\t\t\t</li>\n\t\t\t</ul>\n\t\t\t<span class=\"navbar-text\">\n\t\t\t\tWe Share your code and keep the Highlights\n\t\t\t</span>\n\t\t</div>\n\t</nav>\n</div>\n"
+  ],
+  "names": [],
+  "mappings": "AAcS,WAAW,AAAE,CAAC,AACrB,KAAK,CAAE,OAAO,CAAC,UAAU,AAC1B,CAAC"
+}

@@ -1,0 +1,1863 @@
+commands = {
+   json2lua = {
+      "lua-cjson/2.1.0.6-1"
+   },
+   lapis = {
+      "lapis/1.7.0-1"
+   },
+   lua2json = {
+      "lua-cjson/2.1.0.6-1"
+   },
+   moon = {
+      "moonscript/0.5.0-1"
+   },
+   moonc = {
+      "moonscript/0.5.0-1"
+   },
+   ["resty-auto-ssl/dehydrated"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty-auto-ssl/letsencrypt_hooks"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty-auto-ssl/sockproc"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty-auto-ssl/start_sockproc"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty-repl"] = {
+      "lua-resty-repl/0.0.6-0"
+   }
+}
+dependencies = {
+   ["alt-getopt"] = {
+      ["0.8.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               },
+               {
+                  op = "<",
+                  version = {
+                     5, 4, string = "5.4"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   ansicolors = {
+      ["1.0.2-3"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   cppjwt = {
+      ["0.0-1"] = {
+         {
+            constraints = {},
+            name = "lua-cjson"
+         }
+      }
+   },
+   date = {
+      ["2.1.2-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 0, string = "5.0"
+                  }
+               },
+               {
+                  op = "<",
+                  version = {
+                     5, 4, string = "5.4"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   etlua = {
+      ["1.3.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   lapis = {
+      ["1.7.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = "~>",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         },
+         {
+            constraints = {},
+            name = "ansicolors"
+         },
+         {
+            constraints = {},
+            name = "date"
+         },
+         {
+            constraints = {},
+            name = "etlua"
+         },
+         {
+            constraints = {},
+            name = "loadkit"
+         },
+         {
+            constraints = {},
+            name = "lpeg"
+         },
+         {
+            constraints = {},
+            name = "lua-cjson"
+         },
+         {
+            constraints = {},
+            name = "luaossl"
+         },
+         {
+            constraints = {},
+            name = "luafilesystem"
+         },
+         {
+            constraints = {},
+            name = "luasocket"
+         },
+         {
+            constraints = {},
+            name = "mimetypes"
+         },
+         {
+            constraints = {},
+            name = "pgmoon"
+         }
+      }
+   },
+   ["lapis-console"] = {
+      ["1.1.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         },
+         {
+            constraints = {},
+            name = "lapis"
+         }
+      }
+   },
+   loadkit = {
+      ["1.1.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   lpeg = {
+      ["1.0.2-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   ["lua-cjson"] = {
+      ["2.1.0.6-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   ["lua-geoip"] = {
+      ["0.2-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   ["lua-messagepack"] = {
+      ["0.5.2-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   ["lua-resty-auto-ssl"] = {
+      ["0.12.0-1"] = {
+         {
+            constraints = {},
+            name = "lua-resty-http"
+         }
+      }
+   },
+   ["lua-resty-http"] = {
+      ["0.15-0"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   ["lua-resty-iyo-auth"] = {
+      ["0.0-1"] = {
+         {
+            constraints = {},
+            name = "lua-resty-http"
+         },
+         {
+            constraints = {},
+            name = "lua-resty-jit-uuid"
+         },
+         {
+            constraints = {},
+            name = "lua-resty-session"
+         },
+         {
+            constraints = {},
+            name = "cppjwt"
+         }
+      }
+   },
+   ["lua-resty-jit-uuid"] = {
+      ["0.0.7-2"] = {}
+   },
+   ["lua-resty-jwt"] = {
+      ["0.2.0-0"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   ["lua-resty-redis-connector"] = {
+      ["0.07-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   ["lua-resty-repl"] = {
+      ["0.0.6-0"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   ["lua-resty-session"] = {
+      ["2.24-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   ["lua-toml"] = {
+      ["2.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   luafilesystem = {
+      ["1.7.0-2"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   luaossl = {
+      ["20190731-0"] = {
+         {
+            constraints = {},
+            name = "lua"
+         }
+      }
+   },
+   luasocket = {
+      ["3.0rc1-2"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   mimetypes = {
+      ["1.0.0-2"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   moonscript = {
+      ["0.5.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         },
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     0, 10, string = "0.10"
+                  }
+               },
+               {
+                  op = "~=",
+                  version = {
+                     0, 11, string = "0.11"
+                  }
+               }
+            },
+            name = "lpeg"
+         },
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     0, 7, string = "0.7"
+                  }
+               }
+            },
+            name = "alt-getopt"
+         },
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     1, 5, string = "1.5"
+                  }
+               }
+            },
+            name = "luafilesystem"
+         }
+      }
+   },
+   pgmoon = {
+      ["1.10.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         },
+         {
+            constraints = {},
+            name = "luabitop"
+         },
+         {
+            constraints = {},
+            name = "lpeg"
+         }
+      }
+   }
+}
+modules = {
+   MessagePack = {
+      "lua-messagepack/0.5.2-1"
+   },
+   _openssl = {
+      "luaossl/20190731-0"
+   },
+   alt_getopt = {
+      "alt-getopt/0.8.0-1"
+   },
+   ansicolors = {
+      "ansicolors/1.0.2-3"
+   },
+   cjson = {
+      "lua-cjson/2.1.0.6-1"
+   },
+   ["cjson.util"] = {
+      "lua-cjson/2.1.0.6-1"
+   },
+   ["cpp.jwt"] = {
+      "cppjwt/0.0-1"
+   },
+   date = {
+      "date/2.1.2-1"
+   },
+   etlua = {
+      "etlua/1.3.0-1"
+   },
+   geoip = {
+      "lua-geoip/0.2-1"
+   },
+   ["geoip.city"] = {
+      "lua-geoip/0.2-1"
+   },
+   ["geoip.country"] = {
+      "lua-geoip/0.2-1"
+   },
+   inspect = {
+      "lua-resty-repl/0.0.6-0"
+   },
+   ["iyo-auth.config"] = {
+      "lua-resty-iyo-auth/0.0-1"
+   },
+   ["iyo-auth.http"] = {
+      "lua-resty-iyo-auth/0.0-1"
+   },
+   ["iyo-auth.jwt"] = {
+      "lua-resty-iyo-auth/0.0-1"
+   },
+   ["iyo-auth.nginx"] = {
+      "lua-resty-iyo-auth/0.0-1"
+   },
+   ["iyo-auth.oauth"] = {
+      "lua-resty-iyo-auth/0.0-1"
+   },
+   ["iyo-callback"] = {
+      "lua-resty-iyo-auth/0.0-1"
+   },
+   ["iyo-login"] = {
+      "lua-resty-iyo-auth/0.0-1"
+   },
+   ["iyo-logout"] = {
+      "lua-resty-iyo-auth/0.0-1"
+   },
+   json2lua = {
+      "lua-cjson/2.1.0.6-1"
+   },
+   ["lapis.application"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cache"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.actions"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.attached_server"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.cqueues"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.cqueues.actions"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.cqueues.attached_server"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.cqueues.templates.config"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.nginx"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.nginx.actions"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.nginx.attached_server"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.nginx.config"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.nginx.templates.config"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.nginx.templates.config_etlua"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.nginx.templates.mime_types"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.path"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.templates.app"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.templates.app_lua"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.templates.flow"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.templates.gitignore"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.templates.model"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.templates.models"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.templates.models_lua"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.templates.spec"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.templates.tup"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.cmd.util"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.config"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.console.assets.lib_codemirror_css"] = {
+      "lapis-console/1.1.0-1"
+   },
+   ["lapis.console.assets.lib_codemirror_js"] = {
+      "lapis-console/1.1.0-1"
+   },
+   ["lapis.console.assets.lib_jquery_min_js"] = {
+      "lapis-console/1.1.0-1"
+   },
+   ["lapis.console.assets.main_css"] = {
+      "lapis-console/1.1.0-1"
+   },
+   ["lapis.console.assets.main_js"] = {
+      "lapis-console/1.1.0-1"
+   },
+   ["lapis.console.assets.mode_lua_js"] = {
+      "lapis-console/1.1.0-1"
+   },
+   ["lapis.console.assets.mode_moonscript_js"] = {
+      "lapis-console/1.1.0-1"
+   },
+   ["lapis.console.assets.theme_moon_css"] = {
+      "lapis-console/1.1.0-1"
+   },
+   ["lapis.console.init"] = {
+      "lapis-console/1.1.0-1"
+   },
+   ["lapis.console.views.console"] = {
+      "lapis-console/1.1.0-1"
+   },
+   ["lapis.cqueues"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.csrf"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db.base"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db.base_model"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db.migrations"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db.model"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db.model.relations"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db.mysql"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db.mysql.model"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db.mysql.schema"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db.pagination"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db.postgres"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db.postgres.model"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db.postgres.schema"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.db.schema"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.environment"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.etlua"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.features.etlua"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.flow"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.html"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.http"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.init"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.logging"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.lua"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.moonscript.widget_optimizer"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.nginx"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.nginx.cache"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.nginx.context"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.nginx.http"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.nginx.postgres"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.request"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.router"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.server"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.session"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.spec"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.spec.db"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.spec.request"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.spec.server"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.spec.shared"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.spec.stack"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.time"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.util"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.util.encoding"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.util.functions"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.validate"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.version"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.views.error"] = {
+      "lapis/1.7.0-1"
+   },
+   ["lapis.views.layout"] = {
+      "lapis/1.7.0-1"
+   },
+   lfs = {
+      "luafilesystem/1.7.0-2"
+   },
+   libcppjwt = {
+      "cppjwt/0.0-1"
+   },
+   loadkit = {
+      "loadkit/1.1.0-1"
+   },
+   lpeg = {
+      "lpeg/1.0.2-1"
+   },
+   ltn12 = {
+      "luasocket/3.0rc1-2"
+   },
+   lua2json = {
+      "lua-cjson/2.1.0.6-1"
+   },
+   mime = {
+      "luasocket/3.0rc1-2"
+   },
+   ["mime.core"] = {
+      "luasocket/3.0rc1-2"
+   },
+   mimetypes = {
+      "mimetypes/1.0.0-2"
+   },
+   ["moon.all"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moon.init"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.base"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.cmd.args"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.cmd.coverage"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.cmd.lint"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.cmd.moonc"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.cmd.watchers"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.compile"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.compile.statement"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.compile.value"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.data"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.dump"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.errors"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.init"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.line_tables"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.parse"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.parse.env"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.parse.literals"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.parse.util"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.transform"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.transform.accumulator"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.transform.class"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.transform.comprehension"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.transform.destructure"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.transform.names"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.transform.statement"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.transform.statements"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.transform.transformer"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.transform.value"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.types"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.util"] = {
+      "moonscript/0.5.0-1"
+   },
+   ["moonscript.version"] = {
+      "moonscript/0.5.0-1"
+   },
+   openssl = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.auxlib"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.bignum"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.cipher"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.des"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.digest"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.hmac"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.kdf"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.ocsp.basic"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.ocsp.response"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.pkcs12"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.pkey"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.pubkey"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.rand"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.ssl"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.ssl.context"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.x509"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.x509.altname"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.x509.chain"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.x509.crl"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.x509.csr"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.x509.extension"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.x509.name"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.x509.store"] = {
+      "luaossl/20190731-0"
+   },
+   ["openssl.x509.verify_param"] = {
+      "luaossl/20190731-0"
+   },
+   ["pgmoon.arrays"] = {
+      "pgmoon/1.10.0-1"
+   },
+   ["pgmoon.cqueues"] = {
+      "pgmoon/1.10.0-1"
+   },
+   ["pgmoon.crypto"] = {
+      "pgmoon/1.10.0-1"
+   },
+   ["pgmoon.hstore"] = {
+      "pgmoon/1.10.0-1"
+   },
+   ["pgmoon.init"] = {
+      "pgmoon/1.10.0-1"
+   },
+   ["pgmoon.json"] = {
+      "pgmoon/1.10.0-1"
+   },
+   ["pgmoon.socket"] = {
+      "pgmoon/1.10.0-1"
+   },
+   ["pgmoon.util"] = {
+      "pgmoon/1.10.0-1"
+   },
+   re = {
+      "lpeg/1.0.2-1"
+   },
+   ["resty.auto-ssl"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.init_master"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.init_worker"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.jobs.renewal"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.json_adapters.cjson"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.json_adapters.dkjson"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.servers.challenge"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.servers.hook"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.ssl_certificate"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.ssl_providers.lets_encrypt"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.storage"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.storage_adapters.file"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.storage_adapters.redis"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.utils.run_command"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.utils.shell_execute"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.utils.start_sockproc"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.auto-ssl.vendor.shell"] = {
+      "lua-resty-auto-ssl/0.12.0-1"
+   },
+   ["resty.evp"] = {
+      "lua-resty-jwt/0.2.0-0"
+   },
+   ["resty.hmac"] = {
+      "lua-resty-jwt/0.2.0-0"
+   },
+   ["resty.http"] = {
+      "lua-resty-http/0.15-0"
+   },
+   ["resty.http_headers"] = {
+      "lua-resty-http/0.15-0"
+   },
+   ["resty.jit-uuid"] = {
+      "lua-resty-jit-uuid/0.0.7-2"
+   },
+   ["resty.jwt"] = {
+      "lua-resty-jwt/0.2.0-0"
+   },
+   ["resty.jwt-validators"] = {
+      "lua-resty-jwt/0.2.0-0"
+   },
+   ["resty.redis.connector"] = {
+      "lua-resty-redis-connector/0.07-1"
+   },
+   ["resty.redis.sentinel"] = {
+      "lua-resty-redis-connector/0.07-1"
+   },
+   ["resty.repl"] = {
+      "lua-resty-repl/0.0.6-0"
+   },
+   ["resty.repl.binding"] = {
+      "lua-resty-repl/0.0.6-0"
+   },
+   ["resty.repl.compiler"] = {
+      "lua-resty-repl/0.0.6-0"
+   },
+   ["resty.repl.completer"] = {
+      "lua-resty-repl/0.0.6-0"
+   },
+   ["resty.repl.formatter"] = {
+      "lua-resty-repl/0.0.6-0"
+   },
+   ["resty.repl.readline"] = {
+      "lua-resty-repl/0.0.6-0"
+   },
+   ["resty.repl.readline_stub"] = {
+      "lua-resty-repl/0.0.6-0"
+   },
+   ["resty.repl.readline_utils"] = {
+      "lua-resty-repl/0.0.6-0"
+   },
+   ["resty.repl.sources"] = {
+      "lua-resty-repl/0.0.6-0"
+   },
+   ["resty.repl.ui"] = {
+      "lua-resty-repl/0.0.6-0"
+   },
+   ["resty.session"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.ciphers.aes"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.ciphers.none"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.encoders.base16"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.encoders.base64"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.encoders.hex"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.hmac.sha1"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.identifiers.random"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.serializers.json"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.storage.cookie"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.storage.memcache"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.storage.memcached"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.storage.redis"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.storage.shm"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.strategies.default"] = {
+      "lua-resty-session/2.24-1"
+   },
+   ["resty.session.strategies.regenerate"] = {
+      "lua-resty-session/2.24-1"
+   },
+   socket = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.core"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.ftp"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.headers"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.http"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.serial"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.smtp"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.tp"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.unix"] = {
+      "luasocket/3.0rc1-2"
+   },
+   ["socket.url"] = {
+      "luasocket/3.0rc1-2"
+   },
+   toml = {
+      "lua-toml/2.0-1"
+   }
+}
+repository = {
+   ["alt-getopt"] = {
+      ["0.8.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               alt_getopt = "alt_getopt.lua"
+            }
+         }
+      }
+   },
+   ansicolors = {
+      ["1.0.2-3"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ansicolors = "ansicolors.lua"
+            }
+         }
+      }
+   },
+   cppjwt = {
+      ["0.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {
+               ["lua-cjson"] = "2.1.0.6-1"
+            },
+            modules = {
+               ["cpp.jwt"] = "cpp/jwt.lua",
+               libcppjwt = "libcppjwt.so"
+            }
+         }
+      }
+   },
+   date = {
+      ["2.1.2-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               date = "date.lua"
+            }
+         }
+      }
+   },
+   etlua = {
+      ["1.3.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               etlua = "etlua.lua"
+            }
+         }
+      }
+   },
+   lapis = {
+      ["1.7.0-1"] = {
+         {
+            arch = "installed",
+            commands = {
+               lapis = "lapis"
+            },
+            dependencies = {
+               ansicolors = "1.0.2-3",
+               date = "2.1.2-1",
+               etlua = "1.3.0-1",
+               loadkit = "1.1.0-1",
+               lpeg = "1.0.2-1",
+               ["lua-cjson"] = "2.1.0.6-1",
+               luafilesystem = "1.7.0-2",
+               luaossl = "20190731-0",
+               luasocket = "3.0rc1-2",
+               mimetypes = "1.0.0-2",
+               pgmoon = "1.10.0-1"
+            },
+            modules = {
+               ["lapis.application"] = "lapis/application.lua",
+               ["lapis.cache"] = "lapis/cache.lua",
+               ["lapis.cmd.actions"] = "lapis/cmd/actions.lua",
+               ["lapis.cmd.attached_server"] = "lapis/cmd/attached_server.lua",
+               ["lapis.cmd.cqueues"] = "lapis/cmd/cqueues.lua",
+               ["lapis.cmd.cqueues.actions"] = "lapis/cmd/cqueues/actions.lua",
+               ["lapis.cmd.cqueues.attached_server"] = "lapis/cmd/cqueues/attached_server.lua",
+               ["lapis.cmd.cqueues.templates.config"] = "lapis/cmd/cqueues/templates/config.lua",
+               ["lapis.cmd.nginx"] = "lapis/cmd/nginx.lua",
+               ["lapis.cmd.nginx.actions"] = "lapis/cmd/nginx/actions.lua",
+               ["lapis.cmd.nginx.attached_server"] = "lapis/cmd/nginx/attached_server.lua",
+               ["lapis.cmd.nginx.config"] = "lapis/cmd/nginx/config.lua",
+               ["lapis.cmd.nginx.templates.config"] = "lapis/cmd/nginx/templates/config.lua",
+               ["lapis.cmd.nginx.templates.config_etlua"] = "lapis/cmd/nginx/templates/config_etlua.lua",
+               ["lapis.cmd.nginx.templates.mime_types"] = "lapis/cmd/nginx/templates/mime_types.lua",
+               ["lapis.cmd.path"] = "lapis/cmd/path.lua",
+               ["lapis.cmd.templates.app"] = "lapis/cmd/templates/app.lua",
+               ["lapis.cmd.templates.app_lua"] = "lapis/cmd/templates/app_lua.lua",
+               ["lapis.cmd.templates.flow"] = "lapis/cmd/templates/flow.lua",
+               ["lapis.cmd.templates.gitignore"] = "lapis/cmd/templates/gitignore.lua",
+               ["lapis.cmd.templates.model"] = "lapis/cmd/templates/model.lua",
+               ["lapis.cmd.templates.models"] = "lapis/cmd/templates/models.lua",
+               ["lapis.cmd.templates.models_lua"] = "lapis/cmd/templates/models_lua.lua",
+               ["lapis.cmd.templates.spec"] = "lapis/cmd/templates/spec.lua",
+               ["lapis.cmd.templates.tup"] = "lapis/cmd/templates/tup.lua",
+               ["lapis.cmd.util"] = "lapis/cmd/util.lua",
+               ["lapis.config"] = "lapis/config.lua",
+               ["lapis.cqueues"] = "lapis/cqueues.lua",
+               ["lapis.csrf"] = "lapis/csrf.lua",
+               ["lapis.db"] = "lapis/db.lua",
+               ["lapis.db.base"] = "lapis/db/base.lua",
+               ["lapis.db.base_model"] = "lapis/db/base_model.lua",
+               ["lapis.db.migrations"] = "lapis/db/migrations.lua",
+               ["lapis.db.model"] = "lapis/db/model.lua",
+               ["lapis.db.model.relations"] = "lapis/db/model/relations.lua",
+               ["lapis.db.mysql"] = "lapis/db/mysql.lua",
+               ["lapis.db.mysql.model"] = "lapis/db/mysql/model.lua",
+               ["lapis.db.mysql.schema"] = "lapis/db/mysql/schema.lua",
+               ["lapis.db.pagination"] = "lapis/db/pagination.lua",
+               ["lapis.db.postgres"] = "lapis/db/postgres.lua",
+               ["lapis.db.postgres.model"] = "lapis/db/postgres/model.lua",
+               ["lapis.db.postgres.schema"] = "lapis/db/postgres/schema.lua",
+               ["lapis.db.schema"] = "lapis/db/schema.lua",
+               ["lapis.environment"] = "lapis/environment.lua",
+               ["lapis.etlua"] = "lapis/etlua.lua",
+               ["lapis.features.etlua"] = "lapis/features/etlua.lua",
+               ["lapis.flow"] = "lapis/flow.lua",
+               ["lapis.html"] = "lapis/html.lua",
+               ["lapis.http"] = "lapis/http.lua",
+               ["lapis.init"] = "lapis/init.lua",
+               ["lapis.logging"] = "lapis/logging.lua",
+               ["lapis.lua"] = "lapis/lua.lua",
+               ["lapis.moonscript.widget_optimizer"] = "lapis/moonscript/widget_optimizer.lua",
+               ["lapis.nginx"] = "lapis/nginx.lua",
+               ["lapis.nginx.cache"] = "lapis/nginx/cache.lua",
+               ["lapis.nginx.context"] = "lapis/nginx/context.lua",
+               ["lapis.nginx.http"] = "lapis/nginx/http.lua",
+               ["lapis.nginx.postgres"] = "lapis/nginx/postgres.lua",
+               ["lapis.request"] = "lapis/request.lua",
+               ["lapis.router"] = "lapis/router.lua",
+               ["lapis.server"] = "lapis/server.lua",
+               ["lapis.session"] = "lapis/session.lua",
+               ["lapis.spec"] = "lapis/spec.lua",
+               ["lapis.spec.db"] = "lapis/spec/db.lua",
+               ["lapis.spec.request"] = "lapis/spec/request.lua",
+               ["lapis.spec.server"] = "lapis/spec/server.lua",
+               ["lapis.spec.shared"] = "lapis/spec/shared.lua",
+               ["lapis.spec.stack"] = "lapis/spec/stack.lua",
+               ["lapis.time"] = "lapis/time.lua",
+               ["lapis.util"] = "lapis/util.lua",
+               ["lapis.util.encoding"] = "lapis/util/encoding.lua",
+               ["lapis.util.functions"] = "lapis/util/functions.lua",
+               ["lapis.validate"] = "lapis/validate.lua",
+               ["lapis.version"] = "lapis/version.lua",
+               ["lapis.views.error"] = "lapis/views/error.lua",
+               ["lapis.views.layout"] = "lapis/views/layout.lua"
+            }
+         }
+      }
+   },
+   ["lapis-console"] = {
+      ["1.1.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {
+               ansicolors = "1.0.2-3",
+               date = "2.1.2-1",
+               etlua = "1.3.0-1",
+               lapis = "1.7.0-1",
+               loadkit = "1.1.0-1",
+               lpeg = "1.0.2-1",
+               ["lua-cjson"] = "2.1.0.6-1",
+               luafilesystem = "1.7.0-2",
+               luaossl = "20190731-0",
+               luasocket = "3.0rc1-2",
+               mimetypes = "1.0.0-2",
+               pgmoon = "1.10.0-1"
+            },
+            modules = {
+               ["lapis.console.assets.lib_codemirror_css"] = "lapis/console/assets/lib_codemirror_css.lua",
+               ["lapis.console.assets.lib_codemirror_js"] = "lapis/console/assets/lib_codemirror_js.lua",
+               ["lapis.console.assets.lib_jquery_min_js"] = "lapis/console/assets/lib_jquery_min_js.lua",
+               ["lapis.console.assets.main_css"] = "lapis/console/assets/main_css.lua",
+               ["lapis.console.assets.main_js"] = "lapis/console/assets/main_js.lua",
+               ["lapis.console.assets.mode_lua_js"] = "lapis/console/assets/mode_lua_js.lua",
+               ["lapis.console.assets.mode_moonscript_js"] = "lapis/console/assets/mode_moonscript_js.lua",
+               ["lapis.console.assets.theme_moon_css"] = "lapis/console/assets/theme_moon_css.lua",
+               ["lapis.console.init"] = "lapis/console/init.lua",
+               ["lapis.console.views.console"] = "lapis/console/views/console.lua"
+            }
+         }
+      }
+   },
+   loadkit = {
+      ["1.1.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               loadkit = "loadkit.lua"
+            }
+         }
+      }
+   },
+   lpeg = {
+      ["1.0.2-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               lpeg = "lpeg.so",
+               re = "re.lua"
+            }
+         }
+      }
+   },
+   ["lua-cjson"] = {
+      ["2.1.0.6-1"] = {
+         {
+            arch = "installed",
+            commands = {
+               json2lua = "json2lua",
+               lua2json = "lua2json"
+            },
+            dependencies = {},
+            modules = {
+               cjson = "cjson.so",
+               ["cjson.util"] = "cjson/util.lua",
+               json2lua = "json2lua.lua",
+               lua2json = "lua2json.lua"
+            }
+         }
+      }
+   },
+   ["lua-geoip"] = {
+      ["0.2-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               geoip = "geoip.so",
+               ["geoip.city"] = "geoip/city.so",
+               ["geoip.country"] = "geoip/country.so"
+            }
+         }
+      }
+   },
+   ["lua-messagepack"] = {
+      ["0.5.2-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               MessagePack = "MessagePack.lua"
+            }
+         }
+      }
+   },
+   ["lua-resty-auto-ssl"] = {
+      ["0.12.0-1"] = {
+         {
+            arch = "installed",
+            commands = {
+               ["resty-auto-ssl/dehydrated"] = "resty-auto-ssl/dehydrated",
+               ["resty-auto-ssl/letsencrypt_hooks"] = "resty-auto-ssl/letsencrypt_hooks",
+               ["resty-auto-ssl/sockproc"] = "resty-auto-ssl/sockproc",
+               ["resty-auto-ssl/start_sockproc"] = "resty-auto-ssl/start_sockproc"
+            },
+            dependencies = {
+               ["lua-resty-http"] = "0.15-0"
+            },
+            modules = {
+               ["resty.auto-ssl"] = "resty/auto-ssl.lua",
+               ["resty.auto-ssl.init_master"] = "resty/auto-ssl/init_master.lua",
+               ["resty.auto-ssl.init_worker"] = "resty/auto-ssl/init_worker.lua",
+               ["resty.auto-ssl.jobs.renewal"] = "resty/auto-ssl/jobs/renewal.lua",
+               ["resty.auto-ssl.json_adapters.cjson"] = "resty/auto-ssl/json_adapters/cjson.lua",
+               ["resty.auto-ssl.json_adapters.dkjson"] = "resty/auto-ssl/json_adapters/dkjson.lua",
+               ["resty.auto-ssl.servers.challenge"] = "resty/auto-ssl/servers/challenge.lua",
+               ["resty.auto-ssl.servers.hook"] = "resty/auto-ssl/servers/hook.lua",
+               ["resty.auto-ssl.ssl_certificate"] = "resty/auto-ssl/ssl_certificate.lua",
+               ["resty.auto-ssl.ssl_providers.lets_encrypt"] = "resty/auto-ssl/ssl_providers/lets_encrypt.lua",
+               ["resty.auto-ssl.storage"] = "resty/auto-ssl/storage.lua",
+               ["resty.auto-ssl.storage_adapters.file"] = "resty/auto-ssl/storage_adapters/file.lua",
+               ["resty.auto-ssl.storage_adapters.redis"] = "resty/auto-ssl/storage_adapters/redis.lua",
+               ["resty.auto-ssl.utils.run_command"] = "resty/auto-ssl/utils/run_command.lua",
+               ["resty.auto-ssl.utils.shell_execute"] = "resty/auto-ssl/utils/shell_execute.lua",
+               ["resty.auto-ssl.utils.start_sockproc"] = "resty/auto-ssl/utils/start_sockproc.lua",
+               ["resty.auto-ssl.vendor.shell"] = "resty/auto-ssl/vendor/shell.lua"
+            }
+         }
+      }
+   },
+   ["lua-resty-http"] = {
+      ["0.15-0"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ["resty.http"] = "resty/http.lua",
+               ["resty.http_headers"] = "resty/http_headers.lua"
+            }
+         }
+      }
+   },
+   ["lua-resty-iyo-auth"] = {
+      ["0.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {
+               cppjwt = "0.0-1",
+               ["lua-cjson"] = "2.1.0.6-1",
+               ["lua-resty-http"] = "0.15-0",
+               ["lua-resty-jit-uuid"] = "0.0.7-2",
+               ["lua-resty-session"] = "2.24-1"
+            },
+            modules = {
+               ["iyo-auth.config"] = "iyo-auth/config.lua",
+               ["iyo-auth.http"] = "iyo-auth/http.lua",
+               ["iyo-auth.jwt"] = "iyo-auth/jwt.lua",
+               ["iyo-auth.nginx"] = "iyo-auth/nginx.lua",
+               ["iyo-auth.oauth"] = "iyo-auth/oauth.lua",
+               ["iyo-callback"] = "iyo-callback.lua",
+               ["iyo-login"] = "iyo-login.lua",
+               ["iyo-logout"] = "iyo-logout.lua"
+            }
+         }
+      }
+   },
+   ["lua-resty-jit-uuid"] = {
+      ["0.0.7-2"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ["resty.jit-uuid"] = "resty/jit-uuid.lua"
+            }
+         }
+      }
+   },
+   ["lua-resty-jwt"] = {
+      ["0.2.0-0"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ["resty.evp"] = "resty/evp.lua",
+               ["resty.hmac"] = "resty/hmac.lua",
+               ["resty.jwt"] = "resty/jwt.lua",
+               ["resty.jwt-validators"] = "resty/jwt-validators.lua"
+            }
+         }
+      }
+   },
+   ["lua-resty-redis-connector"] = {
+      ["0.07-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ["resty.redis.connector"] = "resty/redis/connector.lua",
+               ["resty.redis.sentinel"] = "resty/redis/sentinel.lua"
+            }
+         }
+      }
+   },
+   ["lua-resty-repl"] = {
+      ["0.0.6-0"] = {
+         {
+            arch = "installed",
+            commands = {
+               ["resty-repl"] = "resty-repl"
+            },
+            dependencies = {},
+            modules = {
+               inspect = "inspect.lua",
+               ["resty.repl"] = "resty/repl.lua",
+               ["resty.repl.binding"] = "resty/repl/binding.lua",
+               ["resty.repl.compiler"] = "resty/repl/compiler.lua",
+               ["resty.repl.completer"] = "resty/repl/completer.lua",
+               ["resty.repl.formatter"] = "resty/repl/formatter.lua",
+               ["resty.repl.readline"] = "resty/repl/readline.lua",
+               ["resty.repl.readline_stub"] = "resty/repl/readline_stub.lua",
+               ["resty.repl.readline_utils"] = "resty/repl/readline_utils.lua",
+               ["resty.repl.sources"] = "resty/repl/sources.lua",
+               ["resty.repl.ui"] = "resty/repl/ui.lua"
+            }
+         }
+      }
+   },
+   ["lua-resty-session"] = {
+      ["2.24-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ["resty.session"] = "resty/session.lua",
+               ["resty.session.ciphers.aes"] = "resty/session/ciphers/aes.lua",
+               ["resty.session.ciphers.none"] = "resty/session/ciphers/none.lua",
+               ["resty.session.encoders.base16"] = "resty/session/encoders/base16.lua",
+               ["resty.session.encoders.base64"] = "resty/session/encoders/base64.lua",
+               ["resty.session.encoders.hex"] = "resty/session/encoders/hex.lua",
+               ["resty.session.hmac.sha1"] = "resty/session/hmac/sha1.lua",
+               ["resty.session.identifiers.random"] = "resty/session/identifiers/random.lua",
+               ["resty.session.serializers.json"] = "resty/session/serializers/json.lua",
+               ["resty.session.storage.cookie"] = "resty/session/storage/cookie.lua",
+               ["resty.session.storage.memcache"] = "resty/session/storage/memcache.lua",
+               ["resty.session.storage.memcached"] = "resty/session/storage/memcached.lua",
+               ["resty.session.storage.redis"] = "resty/session/storage/redis.lua",
+               ["resty.session.storage.shm"] = "resty/session/storage/shm.lua",
+               ["resty.session.strategies.default"] = "resty/session/strategies/default.lua",
+               ["resty.session.strategies.regenerate"] = "resty/session/strategies/regenerate.lua"
+            }
+         }
+      }
+   },
+   ["lua-toml"] = {
+      ["2.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               toml = "toml.lua"
+            }
+         }
+      }
+   },
+   luafilesystem = {
+      ["1.7.0-2"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               lfs = "lfs.so"
+            }
+         }
+      }
+   },
+   luaossl = {
+      ["20190731-0"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               _openssl = "_openssl.so",
+               openssl = "openssl.lua",
+               ["openssl.auxlib"] = "openssl/auxlib.lua",
+               ["openssl.bignum"] = "openssl/bignum.lua",
+               ["openssl.cipher"] = "openssl/cipher.lua",
+               ["openssl.des"] = "openssl/des.lua",
+               ["openssl.digest"] = "openssl/digest.lua",
+               ["openssl.hmac"] = "openssl/hmac.lua",
+               ["openssl.kdf"] = "openssl/kdf.lua",
+               ["openssl.ocsp.basic"] = "openssl/ocsp/basic.lua",
+               ["openssl.ocsp.response"] = "openssl/ocsp/response.lua",
+               ["openssl.pkcs12"] = "openssl/pkcs12.lua",
+               ["openssl.pkey"] = "openssl/pkey.lua",
+               ["openssl.pubkey"] = "openssl/pubkey.lua",
+               ["openssl.rand"] = "openssl/rand.lua",
+               ["openssl.ssl"] = "openssl/ssl.lua",
+               ["openssl.ssl.context"] = "openssl/ssl/context.lua",
+               ["openssl.x509"] = "openssl/x509.lua",
+               ["openssl.x509.altname"] = "openssl/x509/altname.lua",
+               ["openssl.x509.chain"] = "openssl/x509/chain.lua",
+               ["openssl.x509.crl"] = "openssl/x509/crl.lua",
+               ["openssl.x509.csr"] = "openssl/x509/csr.lua",
+               ["openssl.x509.extension"] = "openssl/x509/extension.lua",
+               ["openssl.x509.name"] = "openssl/x509/name.lua",
+               ["openssl.x509.store"] = "openssl/x509/store.lua",
+               ["openssl.x509.verify_param"] = "openssl/x509/verify_param.lua"
+            }
+         }
+      }
+   },
+   luasocket = {
+      ["3.0rc1-2"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ltn12 = "ltn12.lua",
+               mime = "mime.lua",
+               ["mime.core"] = "mime/core.so",
+               socket = "socket.lua",
+               ["socket.core"] = "socket/core.so",
+               ["socket.ftp"] = "socket/ftp.lua",
+               ["socket.headers"] = "socket/headers.lua",
+               ["socket.http"] = "socket/http.lua",
+               ["socket.serial"] = "socket/serial.so",
+               ["socket.smtp"] = "socket/smtp.lua",
+               ["socket.tp"] = "socket/tp.lua",
+               ["socket.unix"] = "socket/unix.so",
+               ["socket.url"] = "socket/url.lua"
+            }
+         }
+      }
+   },
+   mimetypes = {
+      ["1.0.0-2"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               mimetypes = "mimetypes.lua"
+            }
+         }
+      }
+   },
+   moonscript = {
+      ["0.5.0-1"] = {
+         {
+            arch = "installed",
+            commands = {
+               moon = "moon",
+               moonc = "moonc"
+            },
+            dependencies = {
+               ["alt-getopt"] = "0.8.0-1",
+               lpeg = "1.0.2-1",
+               luafilesystem = "1.7.0-2"
+            },
+            modules = {
+               ["moon.all"] = "moon/all.lua",
+               ["moon.init"] = "moon/init.lua",
+               ["moonscript.base"] = "moonscript/base.lua",
+               ["moonscript.cmd.args"] = "moonscript/cmd/args.lua",
+               ["moonscript.cmd.coverage"] = "moonscript/cmd/coverage.lua",
+               ["moonscript.cmd.lint"] = "moonscript/cmd/lint.lua",
+               ["moonscript.cmd.moonc"] = "moonscript/cmd/moonc.lua",
+               ["moonscript.cmd.watchers"] = "moonscript/cmd/watchers.lua",
+               ["moonscript.compile"] = "moonscript/compile.lua",
+               ["moonscript.compile.statement"] = "moonscript/compile/statement.lua",
+               ["moonscript.compile.value"] = "moonscript/compile/value.lua",
+               ["moonscript.data"] = "moonscript/data.lua",
+               ["moonscript.dump"] = "moonscript/dump.lua",
+               ["moonscript.errors"] = "moonscript/errors.lua",
+               ["moonscript.init"] = "moonscript/init.lua",
+               ["moonscript.line_tables"] = "moonscript/line_tables.lua",
+               ["moonscript.parse"] = "moonscript/parse.lua",
+               ["moonscript.parse.env"] = "moonscript/parse/env.lua",
+               ["moonscript.parse.literals"] = "moonscript/parse/literals.lua",
+               ["moonscript.parse.util"] = "moonscript/parse/util.lua",
+               ["moonscript.transform"] = "moonscript/transform.lua",
+               ["moonscript.transform.accumulator"] = "moonscript/transform/accumulator.lua",
+               ["moonscript.transform.class"] = "moonscript/transform/class.lua",
+               ["moonscript.transform.comprehension"] = "moonscript/transform/comprehension.lua",
+               ["moonscript.transform.destructure"] = "moonscript/transform/destructure.lua",
+               ["moonscript.transform.names"] = "moonscript/transform/names.lua",
+               ["moonscript.transform.statement"] = "moonscript/transform/statement.lua",
+               ["moonscript.transform.statements"] = "moonscript/transform/statements.lua",
+               ["moonscript.transform.transformer"] = "moonscript/transform/transformer.lua",
+               ["moonscript.transform.value"] = "moonscript/transform/value.lua",
+               ["moonscript.types"] = "moonscript/types.lua",
+               ["moonscript.util"] = "moonscript/util.lua",
+               ["moonscript.version"] = "moonscript/version.lua"
+            }
+         }
+      }
+   },
+   pgmoon = {
+      ["1.10.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {
+               lpeg = "1.0.2-1"
+            },
+            modules = {
+               ["pgmoon.arrays"] = "pgmoon/arrays.lua",
+               ["pgmoon.cqueues"] = "pgmoon/cqueues.lua",
+               ["pgmoon.crypto"] = "pgmoon/crypto.lua",
+               ["pgmoon.hstore"] = "pgmoon/hstore.lua",
+               ["pgmoon.init"] = "pgmoon/init.lua",
+               ["pgmoon.json"] = "pgmoon/json.lua",
+               ["pgmoon.socket"] = "pgmoon/socket.lua",
+               ["pgmoon.util"] = "pgmoon/util.lua"
+            }
+         }
+      }
+   }
+}

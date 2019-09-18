@@ -1,0 +1,15 @@
+@url = tfgrid.network.network.1
+name = (S)
+subnet = (S)
+members = (LI)
+
+
+@url = tfgrid.network.networkresult.1
+name = (S)
+subnet = (S)
+
+@url = tfgrid.network.endpoint.1
+network_public = (S)
+network_private = (S)
+port = (I)
+key_public = (S)

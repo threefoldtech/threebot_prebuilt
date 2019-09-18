@@ -1,0 +1,26 @@
+rock_manifest = {
+   doc = {
+      ["README.md"] = "056b8ddf4a3d6ba4921b8b056e25fb27"
+   },
+   ["lapis-console-1.1.0-1.rockspec"] = "6a23961da58e8bfc41fcfad93fe565f7",
+   lua = {
+      lapis = {
+         console = {
+            assets = {
+               ["lib_codemirror_css.lua"] = "d3ee25350b77139a3ee659214b378fe8",
+               ["lib_codemirror_js.lua"] = "24188d0c5500f6ecdf587c7a23d8efa9",
+               ["lib_jquery_min_js.lua"] = "6de76a285044eaf956032b1e80c6c2da",
+               ["main_css.lua"] = "35403c1625dcc53a910aad0e53fb92cd",
+               ["main_js.lua"] = "368551afe89f709029b67b7c1abce169",
+               ["mode_lua_js.lua"] = "d7082c63c0de1914e17f8dafc44511ef",
+               ["mode_moonscript_js.lua"] = "06d12fe8ad0e21c8e4c68acad3c0bc30",
+               ["theme_moon_css.lua"] = "248f4b29d35bfcf6edc71b927ed973e8"
+            },
+            ["init.lua"] = "030783249d3fe05037db22fcd239637d",
+            views = {
+               ["console.lua"] = "79a34fff32099aa27a30f73c7d7b9ab4"
+            }
+         }
+      }
+   }
+}

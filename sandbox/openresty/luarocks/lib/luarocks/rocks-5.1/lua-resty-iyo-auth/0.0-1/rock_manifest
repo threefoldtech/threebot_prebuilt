@@ -1,0 +1,19 @@
+rock_manifest = {
+   doc = {
+      LICENSE = "86d3f3a95c324c9479bd8986968f4327",
+      ["README.md"] = "89cf9b0f67df17505a92e756d691a40e"
+   },
+   lua = {
+      ["iyo-auth"] = {
+         ["config.lua"] = "c2ce15d77575e6de83aad608e0d6facb",
+         ["http.lua"] = "a8b1865fafc126ba875a99592e371a14",
+         ["jwt.lua"] = "ec07f1821a3b114cd6bd2aaa3da8c27b",
+         ["nginx.lua"] = "9766f0aea3ee3e0488943c1c584c59b0",
+         ["oauth.lua"] = "f0ca56c7ef7404207d45800bb950c432"
+      },
+      ["iyo-callback.lua"] = "760b22b951f28c9c0df72c7496b7402e",
+      ["iyo-login.lua"] = "176f11846d5d5ccab0dfec81241b1802",
+      ["iyo-logout.lua"] = "4cc93ce8188041b9ca6bc0443df0b510"
+   },
+   ["lua-resty-iyo-auth-0.0-1.rockspec"] = "393fdf966dae5ac9bd078a70ae30e233"
+}

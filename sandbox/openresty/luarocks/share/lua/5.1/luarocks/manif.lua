@@ -72,18 +72,13 @@ local function fetch_manifest_from(repo_url, filename)
    local cache_dir = dir.path(cfg.local_cache, name)
    local ok = fs.make_dir(cache_dir)
    if not ok then
-      cfg.local_cache = fs.make_temp_dir("local_cache")
-      cache_dir = dir.path(cfg.local_cache, name)
-      ok = fs.make_dir(cache_dir)
-      if not ok then
-         return nil, "Failed creating temporary cache directory "..cache_dir
-      end
+      return nil, "Failed creating temporary cache directory "..cache_dir
    end
-   local file, err, errcode, from_cache = fetch.fetch_url(url, dir.path(cache_dir, filename), true)
+   local file, err, errcode = fetch.fetch_url(url, dir.path(cache_dir, filename), true)
    if not file then
       return nil, "Failed fetching manifest for "..repo_url..(err and " - "..err or ""), errcode
    end
-   return file, nil, nil, from_cache
+   return file
 end
 
 --- Load a local or remote manifest describing a repository.
@@ -111,7 +106,7 @@ function manif.load_manifest(repo_url, lua_version)
    }
 
    local protocol, repodir = dir.split_url(repo_url)
-   local pathname, from_cache
+   local pathname
    if protocol == "file" then
       for _, filename in ipairs(filenames) do
          pathname = dir.path(repodir, filename)
@@ -122,7 +117,7 @@ function manif.load_manifest(repo_url, lua_version)
    else
       local err, errcode
       for _, filename in ipairs(filenames) do
-         pathname, err, errcode, from_cache = fetch_manifest_from(repo_url, filename)
+         pathname, err, errcode = fetch_manifest_from(repo_url, filename)
          if pathname then
             break
          end
@@ -136,15 +131,13 @@ function manif.load_manifest(repo_url, lua_version)
       local dirname = dir.dir_name(pathname)
       fs.change_dir(dirname)
       local nozip = pathname:match("(.*)%.zip$")
-      if not from_cache then
-         fs.delete(nozip)
-         local ok, err = fs.unzip(pathname)
-         fs.pop_dir()
-         if not ok then
-            fs.delete(pathname)
-            fs.delete(pathname..".timestamp")
-            return nil, "Failed extracting manifest file: " .. err
-         end
+      fs.delete(nozip)
+      local ok, err = fs.unzip(pathname)
+      fs.pop_dir()
+      if not ok then
+         fs.delete(pathname)
+         fs.delete(pathname..".timestamp")
+         return nil, "Failed extracting manifest file: " .. err
       end
       pathname = nozip
    end

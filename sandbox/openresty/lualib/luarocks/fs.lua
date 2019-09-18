@@ -49,14 +49,11 @@ do
 end
 
 do
-   local function load_fns(fs_table, inits)
+   local function load_fns(fs_table)
       for name, fn in pairs(fs_table) do
          if not fs[name] then
             fs[name] = fn
          end
-      end
-      if fs_table.init then
-         table.insert(inits, fs_table.init)
       end
    end
 
@@ -67,10 +64,8 @@ do
       end
 
       if not cfg.each_platform then
-         error("cfg is not initialized, please run cfg.init() first")
+         error("cfg is not initalized, please run cfg.init() first")
       end
-
-      local inits = {}
 
       -- Load platform-specific functions
       local loaded_platform = nil
@@ -78,25 +73,20 @@ do
          local ok, fs_plat = pcall(require, "luarocks.fs."..platform)
          if ok and fs_plat then
             loaded_platform = platform
-            load_fns(fs_plat, inits)
+            load_fns(fs_plat)
             break
          end
       end
 
       -- Load platform-independent pure-Lua functionality
       local fs_lua = require("luarocks.fs.lua")
-      load_fns(fs_lua, inits)
+      load_fns(fs_lua)
 
       -- Load platform-specific fallbacks for missing Lua modules
       local ok, fs_plat_tools = pcall(require, "luarocks.fs."..loaded_platform..".tools")
       if ok and fs_plat_tools then
-         load_fns(fs_plat_tools, inits)
+         load_fns(fs_plat_tools)
          load_fns(require("luarocks.fs.tools"))
-      end
-
-      -- Run platform-specific initializations after everything is loaded
-      for _, init in ipairs(inits) do
-         init()
       end
    end
 end

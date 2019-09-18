@@ -14,7 +14,6 @@ local util = require("luarocks.util")
 local dir = require("luarocks.dir")
 local manif = require("luarocks.manif")
 local search = require("luarocks.search")
-local signing = require("luarocks.signing")
 
 --- Create a source rock.
 -- Packages a rockspec and its required source files in a rock
@@ -126,26 +125,7 @@ function pack.pack_installed_rock(query, tree)
    return rock_file
 end
 
-function pack.report_and_sign_local_file(file, err, sign)
-   if err then
-      return nil, err
-   end
-   local sigfile
-   if sign then
-      sigfile, err = signing.sign_file(file)
-      util.printout()
-   end
-   util.printout("Packed: "..file)
-   if sigfile then
-      util.printout("Sigature stored in: "..sigfile)
-   end
-   if err then
-      return nil, err
-   end
-   return true
-end
-
-function pack.pack_binary_rock(name, version, sign, cmd)
+function pack.pack_binary_rock(name, version, cmd)
 
    -- The --pack-binary-rock option for "luarocks build" basically performs
    -- "luarocks build" on a temporary tree and then "luarocks pack". The
@@ -170,8 +150,7 @@ function pack.pack_binary_rock(name, version, sign, cmd)
       rname, rversion = name, version
    end
    local query = queries.new(rname, rversion)
-   local file, err = pack.pack_installed_rock(query, temp_dir)
-   return pack.report_and_sign_local_file(file, err, sign)
+   return pack.pack_installed_rock(query, temp_dir)
 end
 
 return pack

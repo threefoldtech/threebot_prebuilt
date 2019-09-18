@@ -14,7 +14,6 @@ local search = require("luarocks.search")
 local queries = require("luarocks.queries")
 local cfg = require("luarocks.core.cfg")
 local cmd = require("luarocks.cmd")
-local dir = require("luarocks.dir")
 
 install.help_summary = "Install a rock."
 
@@ -30,40 +29,21 @@ or a filename of a locally available rock.
                     in the configuration file.
 
 --only-deps         Installs only the dependencies of the rock.
-
---no-doc            Installs the rock without its documentation.
-
---verify            Verify signature of the rock being installed.
-                    If rock is being downloaded, LuaRocks will attempt
-                    to download the signature as well. If the rock is
-                    local, the signature file should be in the same
-                    directory.
-                    You need the signer’s public key in your local
-                    keyring for this option to work properly.
-
 ]]..util.deps_mode_help()
 
-install.opts = util.opts_table("install.opts", {
-   namespace = "string?",
-   keep = "boolean",
-   force = "boolean",
-   force_fast = "boolean",
-   no_doc = "boolean",
-   deps_mode = "string",
-   verify = "boolean",
-})
 
 --- Install a binary rock.
 -- @param rock_file string: local or remote filename of a rock.
--- @param opts table: installation options
+-- @param deps_mode: string: Which trees to check dependencies for:
+-- "one" for the current default tree, "all" for all trees,
+-- "order" for all trees with priority >= the current default, "none" for no trees.
+-- @param namespace: string?: an optional namespace.
 -- @return (string, string) or (nil, string, [string]): Name and version of
 -- installed rock if succeeded or nil and an error message followed by an error code.
-function install.install_binary_rock(rock_file, opts)
+function install.install_binary_rock(rock_file, deps_mode, namespace)
    assert(type(rock_file) == "string")
-   assert(opts:type() == "install.opts")
-
-   local namespace = opts.namespace
-   local deps_mode = opts.deps_mode
+   assert(type(deps_mode) == "string")
+   assert(type(namespace) == "string" or namespace == nil)
 
    local name, version, arch = path.parse_name(rock_file)
    if not name then
@@ -74,25 +54,23 @@ function install.install_binary_rock(rock_file, opts)
       return nil, "Incompatible architecture "..arch, "arch"
    end
    if repos.is_installed(name, version) then
-      repos.delete_version(name, version, opts.deps_mode)
+      repos.delete_version(name, version, deps_mode)
    end
    
-   local install_dir = path.install_dir(name, version)
-   
    local rollback = util.schedule_function(function()
-      fs.delete(install_dir)
+      fs.delete(path.install_dir(name, version))
       fs.remove_dir_if_empty(path.versions_dir(name))
    end)
-
-   local ok, err, errcode = fetch.fetch_and_unpack_rock(rock_file, install_dir, opts.verify)
+   
+   local ok, err, errcode = fetch.fetch_and_unpack_rock(rock_file, path.install_dir(name, version))
    if not ok then return nil, err, errcode end
-
-   local rockspec, err = fetch.load_rockspec(path.rockspec_file(name, version))
+   
+   local rockspec, err, errcode = fetch.load_rockspec(path.rockspec_file(name, version))
    if err then
       return nil, "Failed loading rockspec for installed package: "..err, errcode
    end
 
-   if opts.deps_mode == "none" then
+   if deps_mode == "none" then
       util.warning("skipping dependency checks.")
    else
       ok, err, errcode = deps.check_external_deps(rockspec, "install")
@@ -111,7 +89,7 @@ function install.install_binary_rock(rock_file, opts)
    end
 
    if deps_mode ~= "none" then
-      ok, err, errcode = deps.fulfill_dependencies(rockspec, "dependencies", deps_mode, opts.verify)
+      ok, err, errcode = deps.fulfill_dependencies(rockspec, "dependencies", deps_mode)
       if err then return nil, err, errcode end
    end
 
@@ -133,13 +111,14 @@ end
 
 --- Installs the dependencies of a binary rock.
 -- @param rock_file string: local or remote filename of a rock.
--- @param opts table: installation options
+-- @param deps_mode: string: Which trees to check dependencies for:
+-- "one" for the current default tree, "all" for all trees,
+-- "order" for all trees with priority >= the current default, "none" for no trees.
 -- @return (string, string) or (nil, string, [string]): Name and version of
 -- the rock whose dependencies were installed if succeeded or nil and an error message 
 -- followed by an error code.
-function install.install_binary_rock_deps(rock_file, opts)
+function install.install_binary_rock_deps(rock_file, deps_mode)
    assert(type(rock_file) == "string")
-   assert(opts:type() == "install.opts")
 
    local name, version, arch = path.parse_name(rock_file)
    if not name then
@@ -150,17 +129,15 @@ function install.install_binary_rock_deps(rock_file, opts)
       return nil, "Incompatible architecture "..arch, "arch"
    end
 
-   local install_dir = path.install_dir(name, version)
-
-   local ok, err, errcode = fetch.fetch_and_unpack_rock(rock_file, install_dir, opts.verify)
+   local ok, err, errcode = fetch.fetch_and_unpack_rock(rock_file, path.install_dir(name, version))
    if not ok then return nil, err, errcode end
    
-   local rockspec, err = fetch.load_rockspec(path.rockspec_file(name, version))
+   local rockspec, err, errcode = fetch.load_rockspec(path.rockspec_file(name, version))
    if err then
       return nil, "Failed loading rockspec for installed package: "..err, errcode
    end
 
-   ok, err, errcode = deps.fulfill_dependencies(rockspec, "dependencies", opts.deps_mode, opts.verify)
+   ok, err, errcode = deps.fulfill_dependencies(rockspec, "dependencies", deps_mode)
    if err then return nil, err, errcode end
 
    util.printout()
@@ -169,41 +146,31 @@ function install.install_binary_rock_deps(rock_file, opts)
    return name, version
 end
 
-local function install_rock_file_deps(filename, opts)
-   assert(opts:type() == "install.opts")
-
-   local name, version = install.install_binary_rock_deps(filename, opts)
+local function install_rock_file_deps(filename, deps_mode)
+   local name, version = install.install_binary_rock_deps(filename, deps_mode)
    if not name then return nil, version end
 
-   writer.check_dependencies(nil, opts.deps_mode)
+   writer.check_dependencies(nil, deps_mode)
    return name, version
 end
 
-local function install_rock_file(filename, opts)
+local function install_rock_file(filename, namespace, deps_mode, keep, force, force_fast)
    assert(type(filename) == "string")
-   assert(opts:type() == "install.opts")
+   assert(type(namespace) == "string" or namespace == nil)
+   assert(type(deps_mode) == "string")
+   assert(type(keep) == "boolean" or keep == nil)
+   assert(type(force) == "boolean" or force == nil)
+   assert(type(force_fast) == "boolean" or force_fast == nil)
 
-   local name, version = install.install_binary_rock(filename, opts)
+   local name, version = install.install_binary_rock(filename, deps_mode, namespace)
    if not name then return nil, version end
 
-   if opts.no_doc then
-      local install_dir = path.install_dir(name, version)
-      for _, f in ipairs(fs.list_dir(install_dir)) do
-         local doc_dirs = { "doc", "docs" }
-         for _, d in ipairs(doc_dirs) do
-            if f == d then
-               fs.delete(dir.path(install_dir, f))
-            end
-         end
-      end
-   end
-
-   if (not opts.keep) and not cfg.keep_other_versions then
-      local ok, err = remove.remove_other_versions(name, version, opts.force, opts.force_fast)
+   if (not keep) and not cfg.keep_other_versions then
+      local ok, err = remove.remove_other_versions(name, version, force, force_fast)
       if not ok then util.printerr(err) end
    end
 
-   writer.check_dependencies(nil, opts.deps_mode)
+   writer.check_dependencies(nil, deps_mode)
    return name, version
 end
 
@@ -232,22 +199,13 @@ function install.command(flags, name, version)
       return build.command(flags, name)
    elseif name:match("%.rock$") then
       local deps_mode = deps.get_deps_mode(flags)
-      local opts = install.opts({
-         namespace = flags["namespace"],
-         keep = not not flags["keep"],
-         force = not not flags["force"],
-         force_fast = not not flags["force-fast"],
-         no_doc = not not flags["no-doc"],
-         deps_mode = deps_mode,
-         verify = not not flags["verify"],
-      })
       if flags["only-deps"] then
-         return install_rock_file_deps(name, opts)
+         return install_rock_file_deps(name, deps_mode)
       else
-         return install_rock_file(name, opts)
+         return install_rock_file(name, flags["namespace"], deps_mode, flags["keep"], flags["force"], flags["force-fast"])
       end
    else
-      local url, err = search.find_suitable_rock(queries.new(name:lower(), version), true)
+      local url, err = search.find_suitable_rock(queries.new(name:lower(), version))
       if not url then
          return nil, err
       end

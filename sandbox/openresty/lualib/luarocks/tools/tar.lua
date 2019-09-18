@@ -4,7 +4,7 @@ local tar = {}
 
 local fs = require("luarocks.fs")
 local dir = require("luarocks.dir")
-local fun = require("luarocks.fun")
+local util = require("luarocks.util")
 
 local blocksize = 512
 
@@ -96,7 +96,6 @@ function tar.untar(filename, destdir)
    
    local long_name, long_link_name
    local ok, err
-   local make_dir = fun.memoize(fs.make_dir)
    while true do
       local block
       repeat
@@ -133,14 +132,14 @@ function tar.untar(filename, destdir)
       local pathname = dir.path(destdir, header.name)
       pathname = fs.absolute_name(pathname)
       if header.typeflag == "directory" then
-         ok, err = make_dir(pathname)
+         ok, err = fs.make_dir(pathname)
          if not ok then
             break
          end
       elseif header.typeflag == "file" then
          local dirname = dir.dir_name(pathname)
          if dirname ~= "" then
-            ok, err = make_dir(dirname)
+            ok, err = fs.make_dir(dirname)
             if not ok then
                break
             end

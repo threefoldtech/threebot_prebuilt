@@ -183,6 +183,30 @@ function tools.bunzip2(infile, outfile)
    return uncompress("bz2", "bunzip2", infile, outfile)
 end
 
+--- Test is file/directory exists
+-- @param file string: filename to test
+-- @return boolean: true if file exists, false otherwise.
+function tools.exists(file)
+   assert(file)
+   return fs.execute(vars.TEST, "-e", file)
+end
+
+--- Test is pathname is a directory.
+-- @param file string: pathname to test
+-- @return boolean: true if it is a directory, false otherwise.
+function tools.is_dir(file)
+   assert(file)
+   return fs.execute(vars.TEST, "-d", file)
+end
+
+--- Test is pathname is a regular file.
+-- @param file string: pathname to test
+-- @return boolean: true if it is a regular file, false otherwise.
+function tools.is_file(file)
+   assert(file)
+   return fs.execute(vars.TEST, "-f", file)
+end
+
 do
    local function rwx_to_octal(rwx)
       return (rwx:match "r" and 4 or 0)
@@ -231,6 +255,19 @@ function tools.set_permissions(filename, mode, scope)
       return false, "Invalid permission " .. mode .. " for " .. scope
    end
    return fs.execute(vars.CHMOD, perms, filename)
+end
+
+function tools.attributes(filename, attrtype)
+   local flag = ((attrtype == "permissions") and vars.STATPERMFLAG)
+             or ((attrtype == "owner") and vars.STATOWNERFLAG)
+   if not flag then return "" end
+   local pipe = io.popen(fs.quiet_stderr(vars.STAT.." "..flag.." "..fs.Q(filename)))
+   local ret = pipe:read("*l")
+   pipe:close()
+   if ret == "" then
+      return nil
+   end
+   return ret
 end
 
 function tools.browser(url)

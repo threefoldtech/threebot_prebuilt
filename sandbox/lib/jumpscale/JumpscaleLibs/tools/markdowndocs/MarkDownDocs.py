@@ -8,7 +8,7 @@ import imp
 import time
 import sys
 
-from .Link import GithubLinker
+from .Link import Linker
 
 JSBASE = j.baseclasses.object
 
@@ -169,16 +169,18 @@ class MarkDownDocs(j.baseclasses.object):
         # else:
         #     self._log_debug("macros not loaded, already there")
 
-    def load(self, path="", name="", sonic_client=None, pull=True):
+    def load(self, path="", name="", sonic_client=None, pull=False, download=False):
         self.macros_load()
         if path.startswith("http"):
             # check if we already have a git repo, then the current checked-out branch
-            dest = j.clients.git.getGitRepoArgs(path)[-3]
+            repo_args = j.clients.git.getGitRepoArgs(path)
+            host = repo_args[0]
+            dest = repo_args[-3]
             repo_dest = j.clients.git.findGitPath(dest, die=False)
             if repo_dest:
                 # replace branch with current one
                 current_branch = j.clients.git.getCurrentBranch(repo_dest)
-                path = GithubLinker.replace_branch(path, current_branch)
+                path = Linker.replace_branch(path, current_branch, host)
             path = j.clients.git.getContentPathFromURLorPath(path, pull=pull)
         ds = DocSite(path=path, name=name, sonic_client=sonic_client or self._sonic_client)
         self.docsites[ds.name] = ds

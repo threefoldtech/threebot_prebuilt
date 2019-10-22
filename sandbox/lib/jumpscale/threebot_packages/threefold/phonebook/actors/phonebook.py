@@ -8,11 +8,19 @@ NONE = 2147483647
 
 class phonebook(j.baseclasses.threebot_actor):
     def _init(self, *args, **kwargs):
-        bcdb = j.data.bcdb.get("threebot_phonebook")
-        self.phonebook_model = bcdb.model_get(url="threebot.phonebook.user.1")
+        self.bcdb = self._bcdb_get("threebot_phonebook")
+        self.phonebook_model = self.bcdb.model_get(url="threebot.phonebook.user.1")
 
-    def wallet_create(self, name, sender_signature_hex):
+    def wallet_create(self, name, schema_out=None, user_session=None):
         """
+
+        ```in
+        name = (S)
+        ```
+
+        ```out
+        wallet_addr = (S)
+        ```
 
         the threebot will create a wallet for you as a user and you can leave money on there to be used for
         paying services on the threefold network
@@ -24,15 +32,25 @@ class phonebook(j.baseclasses.threebot_actor):
 
         :return: a TFT wallet address
         """
-        # just to be 100% transparant to other implementation we will only use the redis client implementation
-        # TODO: needs to be implemented
-
         tfchain = j.clients.tfchain.get(name="default", network_type="TEST")
-        wallet = j.clients.tfchain.default.wallets.get("phonebook_%s" % name)
-        return wallet.address
+        wallet = tfchain.wallets.get("phonebook_%s" % name)
 
-    def name_register(self, name, sender_signature_hex):
+        o = schema_out.new()
+        o.wallet_addr = wallet.address
+        return o
+
+    def name_register(self, name=None, pubkey=None, wallet_name=None, schema_out=None, user_session=None):
         """
+
+        ```in
+        name = (S)
+        wallet_name = (S)
+        pubkey = (S)
+        ```
+
+        ```out
+        !threebot.phonebook.user.1
+        ```
 
         is the first step of a registration, this is the step where money is involved.
         without enough funding it won't happen. The cost is 20 TFT today to register a name.
@@ -43,15 +61,28 @@ class phonebook(j.baseclasses.threebot_actor):
 
         each name registration costs 100 TFT
 
+        returns json of empty object for a threebot user
+
         :return:
         """
         self._log_info("register step1: for 3bot name: %s" % name)
-        cl = self.explorer
-        cl.ping()
+        # TODO: check the money parts
+        res = self.phonebook_model.find(name=name)
+        if len(res) == 1:
+            assert res[0].id
+            assert res[0].pubkey == pubkey
+            return res[0]
+        elif len(res) > 1:
+            raise j.exceptions.JSBUG("more then 1 should never be the case")
+        else:
+            # is a new one, signature not known yet
+            u = self.phonebook_model.new(name=name, pubkey=pubkey)
+            u.save()
+        return u
 
     def record_register(
         self,
-        id=None,
+        tid=None,
         name=None,
         email=None,
         ipaddr="",
@@ -59,16 +90,18 @@ class phonebook(j.baseclasses.threebot_actor):
         pubkey=None,
         sender_signature_hex=None,
         schema_out=None,
+        user_session=None,
     ):
         """
 
         ```in
+        tid = (I)
         name = (S)
         email = (S)
         pubkey = ""                             #public key of the 3bot (is hexflify)
         ipaddr = ""                             #how to reach the digitalme (3bot)
         description = ""                        #optional
-        signature = ""                          #in hex
+        sender_signature_hex = ""               #in hex
         ```
 
         ```out
@@ -85,71 +118,52 @@ class phonebook(j.baseclasses.threebot_actor):
         :return:
         """
 
-        # pubkey2 = binascii.unhexlify(pubkey)
-        # n = j.data.nacl.default
-
+        assert tid
         assert pubkey
         assert name
         assert sender_signature_hex
 
+        # verify data has been correctly signed, so the data corresponds to signature & pubkey used for signature
+        ok = j.data.nacl.payload_verify(
+            tid, name, email, ipaddr, description, pubkey, verifykey=pubkey, signature=sender_signature_hex, die=False
+        )
+        if not ok:
+            raise j.exceptions.Input("threebot cannot be registered, signature wrong")
+
         res = self.phonebook_model.find(name=name)
         if len(res) == 1:
             u = res[0]
-
             id = res[0].id
-
+            if not tid == id:
+                raise j.exceptions.Input("id does not match")
             if pubkey != res[0].pubkey:
                 raise j.exceptions.Input(
                     "public key cannot be changed once registered, it serves as the security for making changes"
                 )
-
-            signature_hex = j.clients.threebot._payload_check(
-                id=u.id, name=name, email=email, ipaddr=ipaddr, description=description, pubkey_hex=pubkey
-            )
-
-            if not signature_hex == signature:
-                raise j.exceptions.Input("threebot cannot be registered, signature wrong")
-
         elif len(res) > 1:
             raise j.exceptions.JSBUG("more thant 1 should never be the case")
         else:
-            # is a new one, signature not known yet
-            u = self.phonebook_model.new(
-                name=name, email=email, ipaddr=ipaddr, description=description, pubkey=pubkey, signature=""
+            raise j.exceptions.JSBUG(
+                "there should have been 1 threebot, first use self.name_register() and then this method."
             )
 
-            signature_hex = j.clients.threebot._payload_check(
-                id=u.id, name=name, email=email, ipaddr=ipaddr, description=description, pubkey_hex=pubkey
-            )
-
-        id = None
-        if len(res) == 1:
-            id = res[0].id
-            if pubkey != res[0].pubkey:
-                raise j.exceptions.Input(
-                    "public key cannot be changed once registered, it serves as the security for making changes"
-                )
-        elif len(res) > 1:
-            raise j.exceptions.Input("cannot have more than 1 user on name")
-
-        u = self.phonebook_model.new(
-            id=id,
-            name=name,
-            email=email,
-            ipaddr=ipaddr,
-            description=description,
-            pubkey=pubkey,
-            signature=signature_hex,
-        )
+        assert u.id == tid
+        assert u.name == name
+        u.email = email
+        u.ipaddr = ipaddr
+        u.description = description
+        u.pubkey = pubkey
+        u.signature = sender_signature_hex
         u.save()
         return u
 
-    def get(self, tid=None, name=None, email=None, schema_out=None):
+    def get(self, tid=None, name=None, email=None, die=True, schema_out=None, user_session=None):
         """
         ```in
         tid = (I)
         name = (S)
         email = (S)
+        die = true (B)
         ```
 
         ```out
@@ -169,6 +183,8 @@ class phonebook(j.baseclasses.threebot_actor):
             raise j.exceptions.NotFound("param error need to specify user_id or name or email")
 
         if len(users) <= 0:
+            if die == False:
+                return None
             raise j.exceptions.NotFound("user not found (%s)" % locals())
         if len(users) > 1:
             raise j.exceptions.NotFound("more than 1 user found (%s)" % locals())
@@ -176,3 +192,25 @@ class phonebook(j.baseclasses.threebot_actor):
         jsxobject = users[0]
 
         return jsxobject
+
+    def validate_signature(
+        self, tid=None, name=None, email=None, payload=None, signature=None, schema_out=None, user_session=None
+    ):
+        """
+        ```in
+        tid = (I)
+        name = (S)
+        email = (S)
+        payload = (S)
+        signature = (S)
+        ```
+        
+        ```out
+        is_valid = (B)
+        ```
+        """
+        u = self.get(tid=tid, name=name, email=email)
+        is_valid = j.data.nacl.payload_verify(payload, verifykey=u.pubkey, signature=signature, die=False)
+        out = schema_out.new()
+        out.is_valid = is_valid
+        return out

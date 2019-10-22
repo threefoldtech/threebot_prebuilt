@@ -11,7 +11,9 @@ class BuilderThreebot(j.baseclasses.builder):
         self.BUILD_LOCATION = self._replace("{DIR_BUILD}/threebot")
         url = "https://github.com/threefoldtech/jumpscaleX_core/tree/%s/sandbox" % j.core.myenv.DEFAULT_BRANCH
         self._sandbox_source = j.clients.git.getContentPathFromURLorPath(url)
-        self.prebuilt_url = "https://github.com/threefoldtech/threebot_prebuilt"
+        self.prebuilt_url = "https://github.com/threefoldtech/sandbox_threebot_linux64"
+        self.path_cfg_dir = "/sandbox/cfg/nginx/default"
+        self._web_path = "/sandbox/var/web/default"
 
     @builder_method()
     def install(self, reset=False):
@@ -32,17 +34,46 @@ class BuilderThreebot(j.baseclasses.builder):
         # DO NOT CHANGE ANYTHING HERE BEFORE YOU REALLY KNOW WHAT YOU'RE DOING
 
     @builder_method()
-    def sandbox(self, reset=False, zhub_client=None, flist_create=True, push_to_repo=False):
-        j.builders.runtimes.lua.sandbox(reset=reset)
-        j.builders.db.zdb.sandbox(reset=reset)
-        j.builders.apps.sonic.sandbox(reset=reset)
+    def sandbox(self, reset=False, reset_deps=False, zhub_client=None, flist_create=False, push_to_repo=False):
+        """
+
+        kosmos 'j.builders.apps.threebot.sandbox(reset=True)'
+
+        :param reset:
+        :param zhub_client:
+        :param flist_create:
+        :param push_to_repo:
+        :return:
+        """
+        j.builders.db.zdb.sandbox(reset=reset_deps)
+
+        j.builders.apps.sonic.sandbox(reset=reset_deps)
+        j.builders.runtimes.python3.sandbox(reset=reset_deps)
+        url = "https://github.com/threefoldtech/jumpscale_weblibs"
+        weblibs_path = j.clients.git.getContentPathFromURLorPath(url, pull=False)
+
+        # copy the templates to the right location
+        j.sal.fs.copyDirTree(
+            "/sandbox/code/github/threefoldtech/jumpscaleX_core/JumpscaleCore/servers/openresty/web_resources",
+            self.path_cfg_dir,
+        )
+
+        j.sal.fs.symlink("%s/static" % weblibs_path, "{}/static/weblibs".format(self._web_path), overwriteTarget=True)
 
         self.tools.copyTree(j.builders.web.openresty.DIR_SANDBOX, self.DIR_SANDBOX)
         self.tools.copyTree(j.builders.runtimes.lua.DIR_SANDBOX, self.DIR_SANDBOX)
         self.tools.copyTree(j.builders.db.zdb.DIR_SANDBOX, self.DIR_SANDBOX)
         self.tools.copyTree(j.builders.apps.sonic.DIR_SANDBOX, self.DIR_SANDBOX)
+        self.tools.copyTree(j.builders.runtimes.python3.DIR_SANDBOX, self.DIR_SANDBOX)
 
-        # sandbox openresty
+        script = """
+        rsync -rav /sandbox/code/github/threefoldtech/jumpscaleX_core/sandbox/cfg/ {DIR_SANDBOX}/sandbox/cfg/
+        rsync -rav /sandbox/code/github/threefoldtech/jumpscaleX_core/sandbox/bin/ {DIR_SANDBOX}/sandbox/bin/
+        rsync -rav /sandbox/code/github/threefoldtech/jumpscaleX_core/sandbox/env.sh {DIR_SANDBOX}/sandbox/env.sh
+        """
+        self._execute(script)
+
+        # sandbox openresty, THINK NO LONGER NEEDED, IS PART OF OPENRESTY FACTORY NOW
         bins = ["openresty", "lua", "resty", "restydoc", "restydoc-index"]
         dirs = {
             self.tools.joinpaths(j.core.dirs.BASEDIR, "cfg/nginx/openresty.cfg"): "sandbox/cfg/nginx",
@@ -79,6 +110,7 @@ class BuilderThreebot(j.baseclasses.builder):
         for dir_dest in new_dirs:
             dir_dest = self.tools.joinpaths(self.DIR_SANDBOX, self.tools.path_relative(dir_dest))
             self.tools.dir_ensure(dir_dest)
+            self.tools.touch(f"{dir_dest}/.keep")
 
         for file_dest, content in root_files.items():
             file_dest = self.tools.joinpaths(self.DIR_SANDBOX, self.tools.path_relative(file_dest))
@@ -92,7 +124,6 @@ class BuilderThreebot(j.baseclasses.builder):
         self.tools.dir_ensure(self.DIR_SANDBOX + "/bin")
         self.tools.copyTree("/sandbox/cfg/ssl/", self.DIR_SANDBOX + "/etc/ssl/")
         self.tools.copyTree("/etc/resty-auto-ssl", self.DIR_SANDBOX + "/etc/resty-auto-ssl")
-        self.tools.copyTree("/bin/resty-auto-ssl", self.DIR_SANDBOX + "/bin/")
 
         file = self.tools.joinpaths(j.sal.fs.getDirName(__file__), "templates", "threebot_startup.toml")
         file_dest = self.tools.joinpaths(self.DIR_SANDBOX, ".startup.toml")
@@ -104,7 +135,7 @@ class BuilderThreebot(j.baseclasses.builder):
 
         js_dir = self.DIR_SANDBOX + "/sandbox/lib/jumpscale"
         self.tools.dir_ensure(js_dir)
-        self.tools.copyTree("/sandbox/lib/jumpscale/", js_dir)
+        self.tools.copyTree("/sandbox/lib/jumpscale/", js_dir, ignoredir=[".git"])
 
         if push_to_repo:
             repo_path = j.clients.git.pullGitRepo(self.prebuilt_url)

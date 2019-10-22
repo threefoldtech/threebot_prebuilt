@@ -1,0 +1,10 @@
+@url = tft.explorer.transaction.1
+hash = "" (S)
+recipient** = "" (S)
+senders = "1,2,3" (LS)
+amount = "" (F) #we should use decimal
+lock = (O) !tft.explorer.lock.1
+message = (S)
+fee = false (B)
+include_in_block_height** = 0 (I)
+

@@ -1,11 +1,11 @@
 @url = tfgrid.network.network.1
-name = (S)
+name** = (S)
 subnet = (S)
 members = (LI)
 
 
 @url = tfgrid.network.networkresult.1
-name = (S)
+name** = (S)
 subnet = (S)
 
 @url = tfgrid.network.endpoint.1

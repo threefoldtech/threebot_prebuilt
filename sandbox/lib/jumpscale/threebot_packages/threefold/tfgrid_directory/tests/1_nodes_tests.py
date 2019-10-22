@@ -32,7 +32,7 @@ def main(self):
         node.location.county = "egypt"
         node.location.city = "cairo"
         node.os_version = "Ubuntu"
-        node.farmer_id = "10"
+        node.farm_id = "10"
         node.total_resource.cru = 1
         node.total_resource.mru = 2
         node.total_resource.sru = 3
@@ -75,7 +75,7 @@ def main(self):
         node_1.location.country = "egypt"
         node_1.location.city = "cairo"
         node_1.os_version = "ubuntu"
-        node_1.farmer_id = "12"
+        node_1.farm_id = "12"
         node_1.total_resource.cru = 5
         node_1.total_resource.mru = 10
         node_1.total_resource.sru = 15
@@ -86,7 +86,7 @@ def main(self):
         node_2.node_id = "1002"
         node_2.location.country = "belgium"
         node_2.location.city = "ghent"
-        node_2.farmer_id = "11"
+        node_2.farm_id = "11"
         node_2.os_version = "ubuntu"
         cl.actors.nodes.add(node_2._ddict)
 
@@ -113,7 +113,7 @@ def main(self):
         node.location.county = "egypt"
         node.location.city = "cairo"
         node.os_version = "Ubuntu"
-        node.farmer_id = "10"
+        node.farm_id = "10"
         result = cl.actors.nodes.add(node._ddict)
 
         logging.info("Get node info, should succeed")
@@ -132,7 +132,7 @@ def main(self):
         node.total_resource.mru = 2
         node.total_resource.sru = 3
         node.total_resource.hru = 4
-        node.farmer_id = "10"
+        node.farm_id = "10"
         result = cl.actors.nodes.add(node._ddict)
 
         logging.info("Update node total_resources, should succeed")
@@ -151,7 +151,7 @@ def main(self):
         node.location.county = "egypt"
         node.location.city = "cairo"
         node.os_version = "Ubuntu"
-        node.farmer_id = "10"
+        node.farm_id = "10"
         node.reserved_resource.cru = 1
         node.reserved_resource.mru = 2
         node.reserved_resource.sru = 3
@@ -174,7 +174,7 @@ def main(self):
         node.location.county = "egypt"
         node.location.city = "cairo"
         node.os_version = "Ubuntu"
-        node.farmer_id = "10"
+        node.farm_id = "10"
         node.used_resource.cru = 1
         node.used_resource.mru = 2
         node.used_resource.sru = 3

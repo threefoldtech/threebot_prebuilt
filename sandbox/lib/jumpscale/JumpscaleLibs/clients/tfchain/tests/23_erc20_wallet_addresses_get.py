@@ -3,6 +3,7 @@ from Jumpscale import j
 import pytest
 
 from JumpscaleLibs.clients.tfchain.stub.ExplorerClientStub import TFChainExplorerGetClientStub
+from JumpscaleLibs.clients.tfchain.test_utils import cleanup
 
 
 def main(self):
@@ -12,9 +13,10 @@ def main(self):
     kosmos 'j.clients.tfchain.test(name="erc20_wallet_addresses_get")'
     """
 
+    cleanup("test_unittest_client")
+
     # create a tfchain client for devnet
-    c = j.clients.tfchain.get("mytestclient", network_type="TEST")
-    # or simply `c = j.tfchain.clients.mytestclient`, should the client already exist
+    c = j.clients.tfchain.new("test_unittest_client", network_type="TEST")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = TFChainExplorerGetClientStub()
@@ -66,13 +68,13 @@ def main(self):
 
     # if the value is invalid (e.g. negative index or one beyond upper bounds),
     # or it is of the wrong type, a ValueError is returned
-    with pytest.raises(ValueError):
+    with pytest.raises(j.exceptions.Value):
         w.erc20.address_get(value=False)
-    with pytest.raises(ValueError):
+    with pytest.raises(j.exceptions.Value):
         w.erc20.address_get(value="01blabla")
-    with pytest.raises(ValueError):
+    with pytest.raises(j.exceptions.Value):
         w.erc20.address_get(value=-1)
-    with pytest.raises(ValueError):
+    with pytest.raises(j.exceptions.Value):
         w.erc20.address_get(value=3)
 
     # if a wallet address is used that is not owned by this wallet,
@@ -88,3 +90,6 @@ def main(self):
     assert results[0].address_tft == "015f46114b110526537c42dbd61c89c91ccf1edf22dd6d445675740ac48c95fb60e378010aeeee"
     assert results[0].address_erc20 == "0x24a905c0b713044b19e049d60b946ebe1cbe38e3"
     assert results[0].confirmations == 1549
+
+    c.wallets.delete()
+    c.delete()

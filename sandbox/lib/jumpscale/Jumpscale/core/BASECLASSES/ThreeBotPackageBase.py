@@ -18,7 +18,7 @@
 # LICENSE END
 
 
-# from Jumpscale import j
+from Jumpscale import j
 from .JSBase import JSBase
 
 
@@ -27,7 +27,71 @@ class ThreeBotPackageBase(JSBase):
 
         assert "package" in kwargs
         self._package = kwargs["package"]
-
         self.package_root = self._package.path
         self.gedis_server = self._package.gedis_server
+        self.rack_server = self._package.threebot_server.rack_server
         self.openresty = self._package.openresty
+        self.threebot_server = self._package.threebot_server
+        self.actors_namespace = "default"
+
+    @property
+    def bcdb(self):
+        # return system by default
+        return j.data.bcdb.system
+
+    def prepare(self):
+        """
+        is called at install time
+        :return:
+        """
+        pass
+
+    def upgrade(self):
+        """
+        used to upgrade
+        """
+        return self.prepare()
+
+    def start(self):
+        """
+        called when the 3bot starts
+        :return:
+        """
+        models_path = self.package_root + "/models"
+        if j.sal.fs.exists(models_path):
+            self.bcdb.models_add(path=models_path)
+
+        actors_path = self.package_root + "/actors"
+        if j.sal.fs.exists(actors_path):
+            self.gedis_server.actors_add(actors_path, namespace="default")
+
+        chatflows_path = self.package_root + "/chatflows"
+        if j.sal.fs.exists(chatflows_path):
+            self.gedis_server.chatbot.chatflows_load(chatflows_path)
+
+        # FIXME or should it be removed? it'll only work if u call package.start manually.
+        # def load_wiki(path=None, name=None):
+        #     wiki = j.tools.markdowndocs.load(path=path, name=name, pull=False)
+        #     wiki.write()
+
+        # path = self.package_root + "/wiki"
+        # if j.sal.fs.exists(path):
+        #     j.servers.myjobs.workers_tmux_start(nr_workers=1)
+        #     name = self._package.name
+        #     job = j.servers.myjobs.schedule(load_wiki, name=name, path=path)
+        #     j.servers.myjobs.wait([job.id], timeout=None, die=False)
+
+    def stop(self):
+        """
+        called when the 3bot stops
+        :return:
+        """
+        pass
+
+    def uninstall(self):
+        """
+        called when the package is no longer needed and will be removed from the threebot
+        :return:
+        """
+        # TODO: clean up bcdb ?
+        pass

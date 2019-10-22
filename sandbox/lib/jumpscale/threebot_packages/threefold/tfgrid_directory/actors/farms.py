@@ -17,7 +17,7 @@ class farms(j.baseclasses.threebot_actor):
             if not getattr(farm, field):
                 raise j.exceptions.Value("%s is required" % field)
 
-    def register(self, farm, schema_out):
+    def register(self, farm, schema_out=None, user_session=None):
         """
         ```in
         farm = (O) !tfgrid.farm.1
@@ -37,7 +37,7 @@ class farms(j.baseclasses.threebot_actor):
         out.farm_id = farm.id
         return out
 
-    def update(self, farm_id, farm):
+    def update(self, farm_id, farm, schema_out=None, user_session=None):
         """
         ```in
         farm_id = (I)
@@ -49,7 +49,7 @@ class farms(j.baseclasses.threebot_actor):
         self.farm_model.set_dynamic(farm._ddict, obj_id=farm_id)
         return True
 
-    def get(self, farm_id, schema_out):
+    def get(self, farm_id, schema_out=None, user_session=None):
         """
         ```in
         farm_id = (I)
@@ -61,7 +61,7 @@ class farms(j.baseclasses.threebot_actor):
         """
         return self._get_farm(farm_id)
 
-    def list(self, country, city, schema_out):
+    def list(self, country, city, schema_out=None, user_session=None):
         """
         ```in
         country = (S)

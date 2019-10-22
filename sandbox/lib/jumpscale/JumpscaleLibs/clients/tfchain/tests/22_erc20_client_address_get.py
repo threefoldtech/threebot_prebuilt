@@ -3,6 +3,7 @@ from Jumpscale import j
 import pytest
 
 from JumpscaleLibs.clients.tfchain.stub.ExplorerClientStub import TFChainExplorerGetClientStub
+from JumpscaleLibs.clients.tfchain.test_utils import cleanup
 
 
 def main(self):
@@ -12,9 +13,10 @@ def main(self):
     kosmos 'j.clients.tfchain.test(name="erc20_client_address_get")'
     """
 
+    cleanup("test_unittest_client")
+
     # create a tfchain client for devnet
-    c = j.clients.tfchain.get("mytestclient", network_type="TEST")
-    # or simply `c = j.tfchain.clients.mytestclient`, should the client already exist
+    c = j.clients.tfchain.new("test_unittest_client", network_type="TEST")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = TFChainExplorerGetClientStub()
@@ -46,3 +48,5 @@ def main(self):
     assert info.address_tft == "015f46114b110526537c42dbd61c89c91ccf1edf22dd6d445675740ac48c95fb60e378010aeeee"
     assert info.address_erc20 == "0x24a905c0b713044b19e049d60b946ebe1cbe38e3"
     assert info.confirmations == 1549
+
+    c.delete()

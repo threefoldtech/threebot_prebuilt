@@ -46,6 +46,27 @@ code sharing system built using svelte and gedis actors
 
 
 ```
+- we are connecting to our endpoints (actors) using bottle server
+```python
+ ## START BOTTLE ACTORS ENDPOINT
+
+        rack = j.servers.rack.get()
+        # get gedis http server
+        app = j.servers.gedishttp.get_app()
+
+        # add gedis http server to the rack
+        rack.bottle_server_add(name="gedishttp", port=9201, app=app)
+
+        # create location `/actors` to on your website `8084` to forward
+        # requests to `9201` where the bottle server is running
+        proxy_location = locations.locations_proxy.new()
+        proxy_location.name = "gedishttp"
+        proxy_location.path_url = "/actors"
+        proxy_location.ipaddr_dest = "0.0.0.0"
+        proxy_location.port_dest = 9201
+        proxy_location.scheme = "http"
+        ## END BOTTLE ACTORS ENDPOINT
+```
 
 
 ## actors

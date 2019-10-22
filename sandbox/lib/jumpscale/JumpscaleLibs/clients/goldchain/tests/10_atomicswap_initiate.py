@@ -5,6 +5,7 @@ import pytest
 from JumpscaleLibs.clients.goldchain.stub.ExplorerClientStub import GoldChainExplorerGetClientStub
 from JumpscaleLibs.clients.goldchain.types.PrimitiveTypes import BinaryData
 from JumpscaleLibs.clients.goldchain.types.AtomicSwap import AtomicSwapContract, AtomicSwapSecretHash
+from JumpscaleLibs.clients.goldchain.test_utils import cleanup
 
 
 def main(self):
@@ -14,12 +15,10 @@ def main(self):
     kosmos 'j.clients.goldchain.test(name="atomicswap_initiate")'
     """
 
-    # delete goldchain devnet client
-    j.clients.goldchain.delete("testnet_unittest_client")
+    cleanup("testnet_unittest_client")
 
     # create a goldchain client for devnet
-    c = j.clients.goldchain.get("testnet_unittest_client", network_type="TEST")
-    # or simply `c = j.goldchain.clients.testnet_unittest_client`, should the client already exist
+    c = j.clients.goldchain.new("testnet_unittest_client", network_type="TEST")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = GoldChainExplorerGetClientStub()
@@ -39,7 +38,7 @@ def main(self):
     c._explorer_post = explorer_client.explorer_post
 
     # a wallet is required to initiate an atomic swap contract
-    w = c.wallets.get(
+    w = c.wallets.new(
         "mytestwallet",
         seed="survey exile lab cook license sock rose squirrel noodle point they lounge oval kit tape virus loop scare water gorilla baby educate program wish",
     )
@@ -103,3 +102,6 @@ def main(self):
             participator="0131cb8e9b5214096fd23c8d88795b2887fbc898aa37125a406fc4769a4f9b3c1dc423852868f6",
             amount=c.minimum_miner_fee - "0.000000001 GFT",
         )
+
+    c.wallets.delete()
+    c.delete()

@@ -1,6 +1,7 @@
 from Jumpscale import j
 
 from JumpscaleLibs.clients.tfchain.stub.ExplorerClientStub import TFChainExplorerGetClientStub
+from JumpscaleLibs.clients.tfchain.test_utils import cleanup
 
 
 def main(self):
@@ -10,9 +11,10 @@ def main(self):
     kosmos 'j.clients.tfchain.test(name="unlockhash_get")'
     """
 
+    cleanup("test_unittest_client")
+
     # create a tfchain client for devnet
-    c = j.clients.tfchain.get("mytestclient", network_type="TEST")
-    # or simply `c = j.tfchain.clients.mytestclient`, should the client already exist
+    c = j.clients.tfchain.new("test_unittest_client", network_type="TEST")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = TFChainExplorerGetClientStub()
@@ -64,3 +66,5 @@ def main(self):
 
     # you can also get multisig addresses linked to the looked up unlockhash
     assert isinstance(result.multisig_addresses, list)
+
+    c.delete()

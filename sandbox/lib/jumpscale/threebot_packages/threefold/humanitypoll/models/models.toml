@@ -1,0 +1,5 @@
+@url = threebot.humanitypoll.1
+@acl = false
+name** = ""                              #e.g. kristof.ibiza or kristof.3bot
+email** = ""                             #optional, not required
+secret = ""

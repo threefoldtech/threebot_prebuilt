@@ -1,0 +1,38 @@
+@url = contact.1
+@acl = false
+firstname** =""
+lastname** = ""
+phone_numbers =  (LO) !contact.phone.1
+addresses =  (LO) !contact.addresses.1
+email = "" (LO) !contact.email.1
+picture= "" 
+birthdate= ""
+website=""
+job_title=""
+salutation = "Mr,Miss,Mme"
+favorite=(B)
+tags= (LS)
+
+
+@url = contact.phone.1
+@acl = false
+number** = ""
+extensions= ""
+description= ""
+priority= ""
+type= ""
+
+@url = contact.addresses.1
+building_number = ""
+street_number= ""
+street_name** =""
+area_locality= ""
+city** = ""
+zip_code= ""
+state_province= ""
+country** = ""
+other_detail= ""
+
+@url = contact.email.1
+email = ""
+description = ""

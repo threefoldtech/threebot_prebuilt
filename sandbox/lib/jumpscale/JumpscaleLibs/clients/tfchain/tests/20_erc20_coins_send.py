@@ -3,6 +3,7 @@ from Jumpscale import j
 import pytest
 
 from JumpscaleLibs.clients.tfchain.stub.ExplorerClientStub import TFChainExplorerGetClientStub
+from JumpscaleLibs.clients.tfchain.test_utils import cleanup
 
 
 def main(self):
@@ -12,9 +13,10 @@ def main(self):
     kosmos 'j.clients.tfchain.test(name="erc20_coins_send")'
     """
 
+    cleanup("dev_unittest_client")
+
     # create a tfchain client for devnet
-    c = j.clients.tfchain.get("mydevclient", network_type="DEV")
-    # or simply `c = j.tfchain.clients.mydevclient`, should the client already exist
+    c = j.clients.tfchain.new("dev_unittest_client", network_type="DEV")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = TFChainExplorerGetClientStub()
@@ -70,13 +72,13 @@ def main(self):
     # you do need to be aware that it is not allowed to specify a lock or data,
     # as these are not allowed for ERC20 Convert Transactions,
     # a ValueError will be raised if you do try to use one or both of these properties
-    with pytest.raises(ValueError):
+    with pytest.raises(j.exceptions.Value):
         result = w.coins_send(recipient="0x828de486adc50aa52dab52a2ec284bcac75be211", amount="200.5 TFT", lock="+5d")
-    with pytest.raises(ValueError):
+    with pytest.raises(j.exceptions.Value):
         result = w.coins_send(
             recipient="0x828de486adc50aa52dab52a2ec284bcac75be211", amount="200.5 TFT", data="some data"
         )
-    with pytest.raises(ValueError):
+    with pytest.raises(j.exceptions.Value):
         result = w.coins_send(
             recipient="0x828de486adc50aa52dab52a2ec284bcac75be211", amount="200.5 TFT", lock=100, data="some data"
         )
@@ -165,3 +167,6 @@ def main(self):
     # ensure the transaction is posted and as expected there as well
     txn = explorer_client.posted_transaction_get(result.transaction.id)
     assert txn.json() == expected_transaction
+
+    c.wallets.delete()
+    c.delete()

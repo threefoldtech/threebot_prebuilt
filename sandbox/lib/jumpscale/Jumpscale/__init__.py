@@ -52,7 +52,7 @@ from .core.InstallTools import BaseInstaller
 from .core.InstallTools import JumpscaleInstaller
 from .core.InstallTools import Tools
 from .core.InstallTools import RedisTools
-
+from .core.InstallTools import DockerFactory
 from .core.InstallTools import MyEnv
 import yaml
 
@@ -190,7 +190,7 @@ class Jumpscale:
         # self.clear()
         return self._shell(stack_depth=stack_depth)
 
-    def debug(self):
+    def debug():
         # disable console logging when entering interactive debugger
         j.core.myenv.log_console = False
         import sys
@@ -230,6 +230,7 @@ j.core.redistools = RedisTools
 j.core.installer_base = BaseInstaller
 j.core.installer_jumpscale = JumpscaleInstaller()
 j.core.tools = Tools
+j.core.dockerfactory = DockerFactory
 
 j.core.tools._data_serializer_safe = j.core._data_serializer_safe
 

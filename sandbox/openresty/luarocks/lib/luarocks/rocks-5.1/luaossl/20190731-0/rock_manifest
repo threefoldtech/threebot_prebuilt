@@ -4,7 +4,7 @@ rock_manifest = {
       ["luaossl.tex"] = "065d99487105de03836b6863d4a5b2cd"
    },
    lib = {
-      ["_openssl.so"] = "fd2678fbebbfd6ff6a03813ff010af11"
+      ["_openssl.so"] = "327a1fa2b0124d48e0da34e3cd87624f"
    },
    lua = {
       openssl = {

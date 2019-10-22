@@ -6,6 +6,7 @@ from JumpscaleLibs.clients.tfchain.stub.ExplorerClientStub import TFChainExplore
 from JumpscaleLibs.clients.tfchain.TFChainClient import ThreeBotRecord
 from JumpscaleLibs.clients.tfchain.types.ThreeBot import BotName, NetworkAddress
 from JumpscaleLibs.clients.tfchain.types.CryptoTypes import PublicKey
+from JumpscaleLibs.clients.tfchain.test_utils import cleanup
 
 
 def main(self):
@@ -15,9 +16,10 @@ def main(self):
     kosmos 'j.clients.tfchain.test(name="threebot_name_transfer")'
     """
 
+    cleanup("dev_unittest_client")
+
     # create a tfchain client for devnet
-    c = j.clients.tfchain.get("mydevclient", network_type="DEV")
-    # or simply `c = j.tfchain.clients.mydevclient`, should the client already exist
+    c = j.clients.tfchain.new("dev_unittest_client", network_type="DEV")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = TFChainExplorerGetClientStub()
@@ -138,7 +140,7 @@ def main(self):
     assert txn.json() == expected_transaction
 
     # if no names to be transfered are defined, a ValueError is raised
-    with pytest.raises(ValueError):
+    with pytest.raises(j.exceptions.Value):
         w.threebot.name_transfer(sender=3, receiver=5, names=[])
 
     # if names are defined to be transfered but one of the two 3Bots do no exist,
@@ -195,3 +197,6 @@ def main(self):
     # if the sender 3Bot is inactive, an error will be raised
     with pytest.raises(j.clients.tfchain.errors.ThreeBotInactive):
         w.threebot.name_transfer(sender=3, receiver=5, names=["foobar"])
+
+    c.wallets.delete()
+    c.delete()

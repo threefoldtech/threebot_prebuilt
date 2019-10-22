@@ -6,6 +6,7 @@ from JumpscaleLibs.clients.tfchain.stub.ExplorerClientStub import TFChainExplore
 from JumpscaleLibs.clients.tfchain.TFChainClient import ThreeBotRecord
 from JumpscaleLibs.clients.tfchain.types.ThreeBot import BotName, NetworkAddress
 from JumpscaleLibs.clients.tfchain.types.CryptoTypes import PublicKey
+from JumpscaleLibs.clients.tfchain.test_utils import cleanup
 
 
 def main(self):
@@ -15,9 +16,10 @@ def main(self):
     kosmos 'j.clients.tfchain.test(name="threebot_record_get")'
     """
 
+    cleanup("test_unittest_client")
+
     # create a tfchain client for devnet
-    c = j.clients.tfchain.get("mytestclient", network_type="DEV")
-    # or simply `c = j.tfchain.clients.mytestclient`, should the client already exist
+    c = j.clients.tfchain.new("test_unittest_client", network_type="DEV")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = TFChainExplorerGetClientStub()
@@ -62,3 +64,5 @@ def main(self):
     # if the 3Bot cannot be found, the j.clients.tfchain.errors.ThreeBotNotFound exception will be raised
     with pytest.raises(j.clients.tfchain.errors.ThreeBotNotFound):
         c.threebot.record_get(1)
+
+    c.delete()

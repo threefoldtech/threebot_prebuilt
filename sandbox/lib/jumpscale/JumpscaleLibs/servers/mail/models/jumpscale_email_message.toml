@@ -1,0 +1,14 @@
+@url = jumpscale.email.message
+from_email = "" (S)
+to_email = "" (S)
+subject = "" (S)
+folder** = "" (S)
+mtime** = (I)
+unseen** = (B)
+recent** = (B)
+headers = (LO)!jumpscale.email.header
+attachments = (LO)!jumpscale.email.attachement
+body = "" (S)
+htmlbody = "" (S)
+date** = (T)
+priority = (B)

@@ -4,7 +4,7 @@ STATIC_DIR = "/sandbox/var/gdrive/static"
 
 
 class gdrive(j.baseclasses.threebot_actor):
-    def file_get(self, doctype, guid1, guid2, schema_out):
+    def file_get(self, doctype, guid1, guid2, schema_out=None, user_session=None):
         """
         ```in
         doctype = "" (S)
@@ -22,7 +22,7 @@ class gdrive(j.baseclasses.threebot_actor):
         """
 
         doctypes_map = {"doc": "drive", "sheet": "drive", "slide": "slides"}
-        cl = j.clients.gdrive.main
+        cl = j.clients.gdrive.get("gdrive_macro_client", credfile="/sandbox/var/cred.json")
 
         if not doctype in doctypes_map:
             raise j.exceptions.Base("invalid type")

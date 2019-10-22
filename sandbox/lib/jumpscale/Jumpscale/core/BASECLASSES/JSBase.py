@@ -82,7 +82,7 @@ class JSBase:
 
     def _hasattr(self, key):
         """
-        will only returh the properties, methods & children (will not lookin jsconfig data)
+        will only return the properties, methods & children (will not lookin jsconfig data)
         :param name:
         :return:
         """
@@ -246,7 +246,7 @@ class JSBase:
         self._cache_ = None
         self._objid_ = None
 
-        for key, obj in self._children.items():
+        for _, obj in self._children.items():
             obj._obj_cache_reset()
 
     def _obj_reset(self):
@@ -627,9 +627,10 @@ class JSBase:
     def _mother_id_get(self):
         """
         this goes to all parents till it finds a parent which has a model attached
-        this is to find the parent which acts as the mother for the children
+        this is to find the parent which acts as the mother for the children.
         when you do a search only the children of this mother will be shown
-        :return:
+
+        :return: The id of the mother if there is a mother
         """
         obj = self
         while obj and obj._parent:
@@ -668,18 +669,17 @@ class JSBase:
         else:
             return []
 
-    def _children_delete(self, recursive=True, filter=None):
+    def _children_delete(self, filter=None):
         """
         filter only applies on the first children search
-        :param recursive:
         :param filter:
         :return:
         """
         for child in self._children_get(filter=filter):
             if child._hasattr("delete"):
-                child.delete(recursive=recursive)
+                child.delete()
             else:
-                child._children_delete(recursive=recursive)
+                child._children_delete()
 
     def _child_get(self, name=None, id=None):
         """
@@ -700,6 +700,24 @@ class JSBase:
             else:
                 raise j.exceptions.Base("need to specify name or id")
         return None
+
+    def _validate_child(self, name):
+        """Check if name is in self._children. If it exists, validate that the name on the object equals to the key in self._children.
+        If not, it updates the key in the self._children dict and deletes the old key <name> and returns False,
+        otherwise returns the object.
+        """
+        if name not in self._children:
+            return False
+
+        child = self._children[name]
+        if not isinstance(child, j.baseclasses.object_config) or child.name == name:
+            return child
+        else:
+            child.save() # save it in case autosave was False, to update the name in the database too
+            del self._children[name]
+            self._children[child.name] = child
+
+        return False
 
     def _dataprops_names_get(self, filter=None):
         """

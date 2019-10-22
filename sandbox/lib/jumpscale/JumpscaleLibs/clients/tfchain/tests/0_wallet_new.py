@@ -1,6 +1,7 @@
 from Jumpscale import j
 
 from JumpscaleLibs.clients.tfchain.stub.ExplorerClientStub import TFChainExplorerGetClientStub
+from JumpscaleLibs.clients.tfchain.test_utils import cleanup
 
 
 def main(self):
@@ -10,20 +11,21 @@ def main(self):
     kosmos 'j.clients.tfchain.test(name="wallet_new")'
     """
 
+    cleanup("dev_unittest_client")
+
     # create a tfchain client for devnet
-    c = j.clients.tfchain.get("mydevclient", network_type="DEV")
-    # or simply `c = j.tfchain.clients.mydevclient`, should the client already exist
+    c = j.clients.tfchain.new("dev_unittest_client", network_type="DEV")
 
     # for standard net you could also immediate create a new wallet using
-    # `c = j.tfchain.clients.mydevclient`, or the more explicit form
-    # `c = j.clients.tfchain.get("mydevclient", network_type="STD")`
+    # `c = j.tfchain.clients.dev_unittest_client`, or the more explicit form
+    # `c = j.clients.tfchain.new("dev_unittest_client", network_type="STD")`
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = TFChainExplorerGetClientStub()
     c._explorer_get = explorer_client.explorer_get
 
     # create a new devnet wallet
-    w = c.wallets.get("mywallet")  # is the implicit form of `c.wallets.new("mywallet")`
+    w = c.wallets.new("mywallet")
 
     # a tfchain (JS) wallet uses the underlying tfchain client for all its
     # interaction with the tfchain network
@@ -51,3 +53,6 @@ def main(self):
     # but is meant for dev purposes, not for an end-user
     for address in w.addresses:
         assert address == str(w.key_pair_get(address).unlockhash)
+
+    c.wallets.delete()
+    c.delete()

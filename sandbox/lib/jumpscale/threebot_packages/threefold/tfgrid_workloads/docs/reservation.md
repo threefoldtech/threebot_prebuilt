@@ -176,3 +176,13 @@ of the reply as well as integrity of the response data.
 - state: Did the workload deploy ok ("ok") or not ("error").
 - message: Content of the message sent by the node.
 - epoch: Time at which the result has been created.
+
+### workload id
+
+can be used to identify a network or volume or ...
+
+- reservation_id+workload_id
+    - both are 4 byte int
+    - can be represented in hex easily for using on a system
+    - is truly unique because the reservation id links to the reservation obj on BCDB
+    - the workload_id is incremental id inside the the reservation obj (unique)

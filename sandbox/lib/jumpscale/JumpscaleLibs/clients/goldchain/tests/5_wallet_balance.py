@@ -1,6 +1,7 @@
 from Jumpscale import j
 
 from JumpscaleLibs.clients.goldchain.stub.ExplorerClientStub import GoldChainExplorerGetClientStub
+from JumpscaleLibs.clients.goldchain.test_utils import cleanup
 
 
 def main(self):
@@ -10,12 +11,10 @@ def main(self):
     kosmos 'j.clients.goldchain.test(name="wallet_balance")'
     """
 
-    # delete goldchain devnet client
-    j.clients.goldchain.delete("devnet_unittest_client")
+    cleanup("devnet_unittest_client")
 
     # create a goldchain client for devnet
-    c = j.clients.goldchain.get("devnet_unittest_client", network_type="DEV")
-    # or simply `c = j.goldchain.clients.devnet_unittest_client`, should the client already exist
+    c = j.clients.goldchain.new("devnet_unittest_client", network_type="DEV")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = GoldChainExplorerGetClientStub()
@@ -89,3 +88,6 @@ def main(self):
     assert str(remainder) == "196.7655"
     assert str(sum([ci.parent_output.value for ci in inputs])) == "198"
     assert suggested_refund == None  # no refund is suggested, as there are too many sources to pick from (2)
+
+    c.wallets.delete()
+    c.delete()

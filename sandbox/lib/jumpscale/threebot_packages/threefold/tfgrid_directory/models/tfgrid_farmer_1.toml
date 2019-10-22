@@ -1,0 +1,8 @@
+#the owner of the farmerss
+
+@url = tfgrid.farmer.1
+owner_threebot_id** = (S)       # not used right now
+iyo_organization** = (S)        # for backward compatibility
+name** = (S)
+wallet_addresses = (LS)
+email = (email)

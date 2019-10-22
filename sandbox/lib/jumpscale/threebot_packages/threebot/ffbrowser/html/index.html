@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+      <meta charset='utf-8'>
+      <title>Jimber Broker Client</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+      <script src="pre_initiate.js"></script>
+      <script src="Decoder.js"></script>
+      <script src="YUVCanvas.js"></script>
+      <script src="webgl-utils.js"></script>
+      <script src="firebase.js"></script>
+      <link id="dynamic-favicon" rel="shortcut icon" href="img/favicon.png?v=2">
+</head>
+
+<body style="visibility:hidden">
+      <img id="photo">
+
+      <div id='upper'></div>
+      <div id='lower'></div>
+
+      <!-- Do u want to make me pretty Hugo? -->
+      
+      <div id='logotype'></div>
+      <div id='slogan'></div>
+      
+      <div id='container'></div>
+      <input type="search" id="search" onsearch="search()" onfocus="searchFocus()">
+      <img id='watermark'>
+      
+      <div id='hamburger' class='v-center float'>
+            <div class='btn-bg circle h-center'>
+                  <button type='button' id='burger-btn' class='ico-btn hover-itm circle'></button>
+            </div>
+      </div>
+
+      <div id='toolbox' class='v-center float' style='display: none'>
+            <div class='btn-bg circle h-center'>
+                  <button type='button' id='stats-btn' class='ico-btn hover-itm circle' onclick='toggleSlide("stats")'></button>
+            </div>
+            <div class='btn-bg circle h-center'>
+                  <button type='button' id='settings-btn' class='ico-btn hover-itm circle' onclick='toggleHide("settings")'></button>
+            </div>
+            <div class='btn-bg circle h-center'>
+                  <button type='button' id='dl-btn' class='ico-btn hover-itm circle' onclick='toggleSlide("downloads")'></button>
+            </div>
+      </div>
+
+
+
+      <div id='ui-wrapper' class='overlay v-center'>
+            
+            <div id='downloads' class='drawer-h v-center bot-anchor-hidden' style='display: block;'>
+                  <div class='slide' onclick='toggleSlide("downloads")'>&#9660;</div>
+                  <div class='drawer-hdr'>DOWNLOADS</div>
+                  <div class='scrollable'>
+                        <div class='card-content' id='downloadlist'></div>
+                  </div>
+            </div>
+
+            <div id='settings' class='card v-center' style='display: none;'>
+                  <div class='close' onclick='toggleHide("settings")'>&#10006;</div>
+                  <div class='card-hdr'>SETTINGS</div>
+                  <div class='card-content'>
+                        <form onchange="saveSettings()" id="jimber_settings_form">
+                              <!-- <label for="allow_pause">Do not render while out of focus</label><input type="checkbox" name="allow_pause" checked><br> -->
+                        </form>
+                  </div>
+            </div>
+
+            <div id='stats' class='drawer-h v-center top-anchor-hidden' style='display: block;'>
+                  <div id='statis'></div>
+                  <div class='slide' onclick='toggleSlide("stats")'>&#9650;</div>
+            </div>
+
+      </div>
+      
+
+      <script src='script.js'></script>
+      <input id="fakeinput">
+</body>
+
+</html>

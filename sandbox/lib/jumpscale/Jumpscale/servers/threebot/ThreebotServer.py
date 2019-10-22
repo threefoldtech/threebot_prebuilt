@@ -1,7 +1,9 @@
 from Jumpscale import j
 import os
 import gevent
-from .OpenPublish import OpenPublish
+import time
+
+# from .OpenPublish import OpenPublish
 
 JSConfigs = j.baseclasses.object_config_collection
 
@@ -29,6 +31,7 @@ class ThreeBotServer(j.baseclasses.object_config):
         self.threebot_server = None
         self.web = False
         self.ssl = False
+        self.client = None
         j.servers.threebot.current = self
 
     @property
@@ -44,7 +47,7 @@ class ThreeBotServer(j.baseclasses.object_config):
     @property
     def gedis_server(self):
         if not self._gedis_server:
-            self._gedis_server = j.servers.gedis.get(name=f"{self.name}_gedis_threebot", port=8901)
+            self._gedis_server = j.servers.gedis.get(name="%s_gedis_threebot" % self.name, port=8901)
             self._gedis_server._threebot_server = self
         return self._gedis_server
 
@@ -59,15 +62,18 @@ class ThreeBotServer(j.baseclasses.object_config):
         return self._openresty_server
 
     def bcdb_get(self, name):
-        zdb_admin = j.clients.zdb.client_admin_get()
+
         if j.data.bcdb.exists(name=name):
-            if not zdb_admin.namespace_exists(name):
-                j.data.bcdb.destroy(name=name)
-        if j.data.bcdb.exists(name=name):
-            return j.data.bcdb.get(name=name)
-        else:
-            zdb = zdb_admin.namespace_new(name, secret=self.secret)
-            return j.data.bcdb.new(name=name, storclient=zdb)
+            bcdb = j.data.bcdb.get(name=name)
+            if bcdb.storclient.type == 'zdb':
+                zdb_admin = j.clients.zdb.client_admin_get()
+                zdb_namespace_exists = zdb_admin.namespace_exists(name)
+                if not zdb_namespace_exists:
+                    # can't we put logic into the bcdb-new to use existing namespace if its there and recreate the index
+                    raise j.exceptions.Base("serious issue bcdb exists, zdb namespace does not")
+            return bcdb
+
+        return j.data.bcdb.new(name=name)
 
     @property
     def zdb(self):
@@ -96,57 +102,31 @@ class ThreeBotServer(j.baseclasses.object_config):
         locations.configure()
         website.configure()
 
-    def _init_web(self, ssl=False):
-        if ssl:
-            bottle_port = 4443
-            websocket_port = 9999
-        else:
-            bottle_port = 4442
-            websocket_port = 4444
-        # start bottle server
-        self.rack_server.bottle_server_add(port=bottle_port)
-        # start gedis websocket
-        gedis_websocket_server = j.servers.gedis_websocket.default.app
-        self.rack_server.websocket_server_add("websocket", websocket_port, gedis_websocket_server)
-
-        if ssl:
-            # create reverse proxies for websocket and bottle
-            self._proxy_create("bottle_proxy", 4442, 4443)
-            self._proxy_create("gedis_proxy", 4444, 9999, ptype="websocket")
-            self._proxy_create("openresty", 443, 80)
-
     def start(self, background=False, web=None, ssl=None):
         """
 
-        kosmos 'j.servers.threebot.default.start(background=True,web=False)'
-        kosmos 'j.servers.threebot.default.start(background=False,web=False)'
+        kosmos -p 'j.servers.threebot.default.start(background=True,web=False)'
+        kosmos -p 'j.servers.threebot.default.start(background=False,web=False)'
 
         :param background: if True will start all servers including threebot itself in the background
 
-        Threebot will start the following servers by default
+        ports & paths used for threebotserver
+        see: /sandbox/code/github/threefoldtech/jumpscaleX_core/docs/3Bot/web_environment.md
 
-        zdb                                         (port:9900)
-        sonic                                       (port:1491)
-        gedis                                       (port:8901)
-
-        if web:
-            openresty                                   (port:80 and 443 for ssl)
-            gedis websocket                             (port:4444 or 9999 if ssl=True)
-            bottle server                               (port:44442 or 4443 if ssl=True) serves the bcdbfs content
-
-            if ssl=True:
-                reverse proxy for gedis websocket           (port:4444) to use ssl certificate from openresty
-                reverse proxy for bottle server             (port:4442) to use ssl certificate from openresty
         """
         if web is None:
             web = self.web
+        else:
+            self.web = web
 
         if ssl is None:
             ssl = self.ssl
+        else:
+            self.ssl = ssl
+
+        self.save()
 
         if not background:
-            if web:
-                self._init_web(ssl=ssl)
 
             self.zdb.start()
             j.servers.sonic.default.start()
@@ -159,46 +139,87 @@ class ThreeBotServer(j.baseclasses.object_config):
             bcdb = j.data.bcdb.system
             redis_server = bcdb.redis_server_get(port=6380, secret="123456")
             self.rack_server.add("bcdb_system_redis", redis_server.gevent_server)
+            # FIXME: the package_manager actor doesn't properly load the package (web interface)
+
+            j.tools.threebot_packages.get(
+                "webinterface",
+                path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/webinterface/",
+            )
+            j.tools.threebot_packages.get(
+                "wiki", path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/wiki/"
+            )
+            j.tools.threebot_packages.get(
+                "chat", path="/sandbox/code/github/threefoldtech/jumpscaleX_threebot/ThreeBotPackages/threebot/chat/"
+            )
 
             # add user added packages
             for package in j.tools.threebot_packages.find():
-                try:
+                if package.status == "INIT":
+                    self._log_warning("PREPARE:%s" % package.name)
+                    package.prepare()
+                    package.status = "INSTALLED"
+                    package.save()
+                if package.status not in ["disabled"]:
+                    self._log_warning("START:%s" % package.name)
                     package.start()
-                except Exception as e:
-                    logdict = j.core.tools.log(level=50, exception=e, stdout=True)
-
+                    package.status = "RUNNING"
+                    package.save()
+                    # try:
+                    #     package.start()
+                    # except Exception as e:
+                    #     j.core.tools.log(level=50, exception=e, stdout=True)
+                    #     package.status = "error"
             if web:
+                self._log_info("OPENRESTY START")
                 self.openresty_server.start()
+                # for in case was already loaded
+                j.servers.threebot.current.openresty_server.reload()
             self.rack_server.start()
 
         else:
-            if self.startup_cmd.is_running():
-                self.startup_cmd.stop()
-            self.startup_cmd.start()
+            if not self.startup_cmd.is_running():
+                self.startup_cmd.start()
+                time.sleep(1)
+
+        if not j.sal.nettools.waitConnectionTest("127.0.0.1", 8901, timeout=120):
+            raise j.exceptions.Timeout("Could not start threebot server")
+
+        self.client = j.clients.gedis.get(name="threebot", port=8901, namespace="default")
+        # TODO: will have to authenticate myself
+
+        self.client.reload()
+        assert self.client.ping()
+
+        return self.client
 
     def stop(self):
         """
         :return:
         """
         self.startup_cmd.stop(waitstop=False, force=True)
+        self.openresty_server.stop()
 
     @property
     def startup_cmd(self):
-        if not self._startup_cmd:
-            cmd_start = """
-            from gevent import monkey
-            monkey.patch_all(subprocess=False)
-            from Jumpscale import j
-            server = j.servers.threebot.get("{name}", executor='{executor}', web={web}, ssl={ssl})
-            server.start(background=False)
-            """.format(
-                name=self.name, executor=self.executor, web=self.web, ssl=self.ssl
-            )
-            cmd_start = j.core.tools.text_strip(cmd_start)
-            startup = j.servers.startupcmd.get(name="threebot_{}".format(self.name), cmd_start=cmd_start)
-            startup.executor = self.executor
-            startup.interpreter = "python"
-            startup.timeout = 60
-            startup.ports = [8901, 4444, 8090]
-            self._startup_cmd = startup
-        return self._startup_cmd
+        if self.web:
+            web = "True"
+        else:
+            web = "False"
+        cmd_start = """
+        from gevent import monkey
+        monkey.patch_all(subprocess=False)
+        from Jumpscale import j
+        server = j.servers.threebot.get("{name}", executor='{executor}', web={web})
+        server.start(background=False)
+        """.format(
+            name=self.name, executor=self.executor, web=web
+        )
+        cmd_start = j.core.tools.text_strip(cmd_start)
+        startup = j.servers.startupcmd.get(name="threebot_{}".format(self.name), cmd_start=cmd_start)
+        startup.executor = self.executor
+        startup.interpreter = "python"
+        startup.timeout = 120
+        startup.ports = [9900, 1491, 8901]
+        if self.web:
+            startup.ports += [80, 443, 4444, 4445]
+        return startup

@@ -1,6 +1,7 @@
 from Jumpscale import j
 
 from JumpscaleLibs.clients.tfchain.stub.ExplorerClientStub import TFChainExplorerGetClientStub
+from JumpscaleLibs.clients.tfchain.test_utils import cleanup
 
 
 def main(self):
@@ -10,9 +11,10 @@ def main(self):
     kosmos 'j.clients.tfchain.test(name="coin_output_get")'
     """
 
+    cleanup("test_unittest_client")
+
     # create a tfchain client for devnet
-    c = j.clients.tfchain.get("mytestclient", network_type="TEST")
-    # or simply `c = j.tfchain.clients.mytestclient`, should the client already exist
+    c = j.clients.tfchain.new("test_unittest_client", network_type="TEST")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = TFChainExplorerGetClientStub()
@@ -82,3 +84,5 @@ def main(self):
     assert str(spend_txn.id) == "564a6d97b2d2f635ef26af90ab73268bbe7433c05d9f63a2f0b86615aabd4dc1"
     assert len(spend_txn.coin_inputs) == 1
     assert spend_txn.coin_inputs[0].parentid == co.id
+
+    c.delete()

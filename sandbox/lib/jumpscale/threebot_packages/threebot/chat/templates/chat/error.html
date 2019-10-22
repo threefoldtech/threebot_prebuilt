@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/chatstatic/weblibs/bootstrap4/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/chatstatic/home/css/fonts.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/chatstatic/home/css/style.css">
+</head>
+
+<body>
+    <div class="intro">
+        <div class="container">
+            <div class="intro-text justify-content-center">
+                <div class="row">
+                    <div class="col-sm">
+                        <img src="/chatstatic/home/img/3BOT - ROBOT.png" alt="3Bot">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm text-center">
+                        <h2>{{error}}.</h2>
+                        <h2>For registerd chatflows <a href="/chat">click here</a>.</h2>
+                        <ul>
+                            {% for chatflow, sanitized_name in chatflows %}
+                            <li><a href="/chat/session/{{chatflow}}">{{sanitized_name}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

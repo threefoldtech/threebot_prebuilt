@@ -13,6 +13,7 @@ class ThreeBotPackage(JSConfigBase):
         path = ""
         threebot_server_name = "default"
         branch = ""
+        status = "init,installed,running,halted,disabled,error" (E)
         """
 
     @property
@@ -49,21 +50,59 @@ class ThreeBotPackage(JSConfigBase):
                 )
 
             klass = j.tools.codeloader.load(obj_key="Package", path=self._path_package, reload=False)
-            self._package = klass(package=self)
+            self._package_author = klass(package=self)
+
+            path = self.path + "/models"
+            if j.sal.fs.exists(path):
+                self.bcdb.models_add(path)
+
+            path = self.path + "/actors"
+            if j.sal.fs.exists(path):
+                self.gedis_server.actors_add(path, namespace=self._package_author.actors_namespace)
+
+            path = self.path + "/chatflows"
+            if j.sal.fs.exists(path):
+                self.gedis_server.chatbot.chatflows_load(path)
+
+            def load_wiki(path=None, name=None):
+                wiki = j.tools.markdowndocs.load(path=path, name=name, pull=False)
+                wiki.write()
+
+            # FIXME: need to work against myjobs and breaks due to some worker error.
+            # Works fine in the foreground, but slows the server a lot.
+            # path = self.path + "/wiki"
+            # if j.sal.fs.exists(path):
+
+            #     # j.servers.myjobs.workers_tmux_start(nr_workers=1)
+            #     name = self.name
+            #     load_wiki(name=name, path=path)
+            #     # job = j.servers.myjobs.schedule(load_wiki, name=name, path=path)
+            #     # j.servers.myjobs.wait([job.id], timeout=None, die=False)
+
+            # TODO: for loading wiki's & macros's (REEM TO PLAN)
+
         self._init_ = True
 
-    def prepare(self, *args):
+    @property
+    def bcdb(self):
+        return self._package_author.bcdb
+
+    def prepare(self):
         self._init_before_action()
-        self._package.prepare(*args)
+        self._package_author.prepare()
 
     def start(self):
         self._init_before_action()
-        self._package.start()
+        self._package_author.start()
 
     def stop(self):
         self._init_before_action()
-        self._package.stop()
+        self._package_author.stop()
 
     def uninstall(self):
         self._init_before_action()
-        self._package.uninstall()
+        self._package_author.uninstall()
+
+    def disable(self):
+        self.status = "disabled"
+        self.save()

@@ -13,6 +13,15 @@ import gevent
 from gevent import event
 
 
+class StripPathMiddleware(object):
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, e, h):
+        e["PATH_INFO"] = e["PATH_INFO"].rstrip("/")
+        return self.app(e, h)
+
+
 class ServerRack(JSBASE):
     """
     is a group of gedis servers in a virtual rack
@@ -23,26 +32,48 @@ class ServerRack(JSBASE):
         self.greenlets = {}
         self._logger_enable()
         # self._monkeypatch_done = False
+        self.is_started = False
 
-    def add(self, name, server, start=False):
+    def add(self, name, server):
         """add a gevent server
 
-
+        if the server rack is already started it will start the added server too otherwise it will only add it
         REMARK: make sure that subprocesses are run before adding gevent servers
 
         :param name: server name
         :type name: str
         :param server: gevent server
         :type server: gevent.baseserver.BaseServer
-        :param start: do server.start() after, defaults to False
-        :type start: bool, optional
         """
         assert server
-        self.servers[name] = server
-        if start:
-            server.start()
 
-    def bottle_server_add(self, name="bottle", port=4442, app=None, websocket=False):
+        if self.is_started and not server in self.servers:
+            self.servers[name] = server
+            server.start()
+        else:
+            self.servers[name] = server
+
+    def bottle_server_add(
+        self, name="bottle", port=4442, app=None, websocket=False, force_override=False, strip_slash=True
+    ):
+        """add a bottle app server
+
+        :param name: name, defaults to "bottle"
+        :type name: str, optional
+        :param port: port to listen on, defaults to 4442
+        :type port: int, optional
+        :param app: app, if not given, will be created, defaults to None
+        :type app: WSGI application, optional
+        :param websocket: enable websocket handler, defaults to False
+        :type websocket: bool, optional
+        :param force_override: if set, the app will be re-added, defaults to False
+        :type force_override: bool, optional
+        :param strip_slash: strip slash for all routes, so e.g `/index/` will match `/index` too, defaults to True
+        :type strip_slash: bool, optional
+        """
+        # TODO: improve the check for name+port combo
+        if name in self.servers and not force_override:
+            return True
 
         from gevent.pywsgi import WSGIServer
         from geventwebsocket.handler import WebSocketHandler
@@ -78,6 +109,9 @@ class ServerRack(JSBASE):
                     abort(404)
                 response.headers["Content-Type"] = mimetypes.guess_type(url)[0]
                 return file
+
+        if strip_slash:
+            app = StripPathMiddleware(app)
 
         if not websocket:
             server = WSGIServer(("0.0.0.0", port), app)
@@ -210,8 +244,11 @@ class ServerRack(JSBASE):
                 started.append(server)
                 name = getattr(server, "name", None) or server.__class__.__name__ or "Server"
                 self._log_info("%s started on %s" % (name, server.address))
+            self.is_started = True
+
         except:
-            self.stop(started)
+            self.stop()
+            self.is_started = False
             raise
 
         forever = event.Event()
@@ -223,7 +260,7 @@ class ServerRack(JSBASE):
     def stop(self, servers=None):
         self._log_info("stopping server rack")
         if servers is None:
-            servers = [item[1] for item in self.servers.items()]
+            servers = self.servers.values()
         for server in servers:
             try:
                 server.stop()

@@ -6,6 +6,7 @@ from JumpscaleLibs.clients.tfchain.stub.ExplorerClientStub import TFChainExplore
 from JumpscaleLibs.clients.tfchain.TFChainClient import ThreeBotRecord
 from JumpscaleLibs.clients.tfchain.types.ThreeBot import BotName, NetworkAddress
 from JumpscaleLibs.clients.tfchain.types.CryptoTypes import PublicKey
+from JumpscaleLibs.clients.tfchain.test_utils import cleanup
 
 
 def main(self):
@@ -15,9 +16,10 @@ def main(self):
     kosmos 'j.clients.tfchain.test(name="threebot_record_update")'
     """
 
+    cleanup("dev_unittest_client")
+
     # create a tfchain client for devnet
-    c = j.clients.tfchain.get("mydevclient", network_type="DEV")
-    # or simply `c = j.tfchain.clients.mydevclient`, should the client already exist
+    c = j.clients.tfchain.new("dev_unittest_client", network_type="DEV")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = TFChainExplorerGetClientStub()
@@ -134,7 +136,7 @@ def main(self):
     assert txn.json() == expected_transaction
 
     # if no data is given to update, a ValueError exception will be raised
-    with pytest.raises(ValueError):
+    with pytest.raises(j.exceptions.Value):
         w.threebot.record_update(3)
 
     # if data is given to update,
@@ -142,3 +144,6 @@ def main(self):
     # an j.clients.tfchain.errors.ThreeBotNotFound exception will be raised
     with pytest.raises(j.clients.tfchain.errors.ThreeBotNotFound):
         w.threebot.record_update(2, months=1)
+
+    c.wallets.delete()
+    c.delete()

@@ -9,6 +9,9 @@ import nacl.hash
 import nacl.encoding
 import hashlib
 
+import binascii
+
+
 # from .AgentWithKeyname import AgentWithName
 import binascii
 from nacl.exceptions import BadSignatureError
@@ -21,13 +24,16 @@ MyEnv = j.core.myenv
 
 
 class NACL(j.baseclasses.object):
-    def _init(self, name=None, **kwargs):
+    def _init(self, name=None, configure_if_needed=False, **kwargs):
         assert name
         self.name = name
         self._signingkey = None
         self._box = None
         if not Tools.exists(self._path):
             Tools.dir_ensure(self._path)
+        if not Tools.exists(self._path_seed):
+            if configure_if_needed:
+                self.configure(privkey_words=None, generate=True)
 
     def reset(self):
         self._signingkey = None
@@ -50,6 +56,14 @@ class NACL(j.baseclasses.object):
     @property
     def public_key(self):
         return self.signing_key.verify_key.to_curve25519_public_key()
+
+    @property
+    def public_key_hex(self):
+        return binascii.hexlify(self.public_key.encode()).decode()
+
+    @property
+    def verify_key_hex(self):
+        return binascii.hexlify(self.verify_key.encode()).decode()
 
     @property
     def box(self):
@@ -173,10 +187,10 @@ class NACL(j.baseclasses.object):
                     assert self._signingkey
                     return
                 # means we did not find the seed yet
-                if interactive:
-                    self._ask_privkey_words()
-                elif generate:
+                if generate:
                     self._keys_generate()
+                elif interactive:
+                    self._ask_privkey_words()
                 else:
                     self._error_raise("cannot generate private key, was not allowed")
 
@@ -287,8 +301,7 @@ class NACL(j.baseclasses.object):
         """
         if not public_key:
             public_key = self.public_key
-
-            data = self.tobytes(data)
+        data = self.tobytes(data)
         sealed_box = SealedBox(public_key)
         res = sealed_box.encrypt(data)
         if hex:
@@ -314,8 +327,21 @@ class NACL(j.baseclasses.object):
         sign using your private key using Ed25519 algorithm
         the result will be 64 bytes
         """
+        if isinstance(data, str):
+            data = data.encode()
         signed = self.signing_key.sign(data)
         return signed.signature
+
+    def sign_hex(self, data):
+        """
+        sign using your private key using Ed25519 algorithm
+        the result will be 128 bytes
+        """
+        if isinstance(data, str):
+            data = data.encode()
+        signed = self.signing_key.sign(data)
+        signedhex = binascii.hexlify(signed.signature)
+        return signedhex
 
     def verify(self, data, signature, verify_key=""):
         """ data is the original data we have to verify with signature

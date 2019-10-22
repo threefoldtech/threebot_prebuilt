@@ -5,6 +5,7 @@ import pytest
 from JumpscaleLibs.clients.tfchain.stub.ExplorerClientStub import TFChainExplorerGetClientStub
 from JumpscaleLibs.clients.tfchain.types.PrimitiveTypes import BinaryData
 from JumpscaleLibs.clients.tfchain.types.AtomicSwap import AtomicSwapContract, AtomicSwapSecretHash
+from JumpscaleLibs.clients.tfchain.test_utils import cleanup
 
 
 def main(self):
@@ -14,9 +15,10 @@ def main(self):
     kosmos 'j.clients.tfchain.test(name="atomicswap_initiate")'
     """
 
+    cleanup("test_unittest_client")
+
     # create a tfchain client for devnet
-    c = j.clients.tfchain.get("mytestclient", network_type="TEST")
-    # or simply `c = j.tfchain.clients.mytestclient`, should the client already exist
+    c = j.clients.tfchain.new("test_unittest_client", network_type="TEST")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = TFChainExplorerGetClientStub()
@@ -36,7 +38,7 @@ def main(self):
     c._explorer_post = explorer_client.explorer_post
 
     # a wallet is required to initiate an atomic swap contract
-    w = c.wallets.get(
+    w = c.wallets.new(
         "mytestwallet",
         seed="survey exile lab cook license sock rose squirrel noodle point they lounge oval kit tape virus loop scare water gorilla baby educate program wish",
     )
@@ -100,3 +102,6 @@ def main(self):
             participator="0131cb8e9b5214096fd23c8d88795b2887fbc898aa37125a406fc4769a4f9b3c1dc423852868f6",
             amount=c.minimum_miner_fee - "0.000000001 TFT",
         )
+
+    c.wallets.delete()
+    c.delete()

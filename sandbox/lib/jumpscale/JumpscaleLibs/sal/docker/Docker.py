@@ -46,7 +46,7 @@ class Docker(j.baseclasses.object):
         """
 
         self._containers = []
-        for obj in self.client.containers():
+        for obj in self.client.containers(all=True):
             self._containers.append(Container(obj, self.client))
         return self._containers
 
@@ -186,7 +186,7 @@ class Docker(j.baseclasses.object):
         """
 
         for container in self.containers:
-            if container.id == id:
+            if container.id.startswith(id):
                 return container
         if die:
             raise j.exceptions.RuntimeError("Container with id %s doesn't exists" % id)
@@ -556,9 +556,7 @@ class Docker(j.baseclasses.object):
         return: string containing the stdout
         """
         out = []
-        if force:
-            nocache = True
-        for l in self.client.build(path=path, tag=tag, nocache=nocache):
+        for l in self.client.build(path=path, tag=tag, nocache=force):
             line = j.data.serializers.json.loads(l)
             if "stream" in line:
                 line = line["stream"].strip()

@@ -1,0 +1,62 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Jimber Security Broker - Add alias</title>
+
+
+</head>
+
+<body>
+    <script src="https://www.gstatic.com/firebasejs/5.4.2/firebase.js"></script>
+    <script src="js/firebase.js"></script>
+    <script src="js/firebase_aliases.js"></script>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <style>
+        body{
+            width: 500px;
+            margin: 0px auto;   
+        }
+        h1{
+            font-size: 15px;
+        }
+    </style>
+
+
+    <script>
+        function AddAliasImpl() {
+            var callback = function (succeed) {
+                if (succeed) {
+                    alert("alias added!");
+                }
+                else {
+                    alert("Cannot add alias! (already exists?)")
+                }
+            }
+            addAlias(document.getElementById("alias").value, document.getElementById("url").value, callback);
+        }
+
+    </script>
+
+</body>
+
+<h1> Add alias to Security Broker </h1>
+
+<form>
+    Alias:
+    <input type="text" id="alias">
+    <br> URL:
+    <input type="text" id="url">
+    <br>
+    <input type="button" value="Add alias" onclick="AddAliasImpl()" class="btn red">
+</form>
+
+</html>

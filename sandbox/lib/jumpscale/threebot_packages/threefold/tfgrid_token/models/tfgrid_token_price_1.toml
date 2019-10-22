@@ -1,0 +1,30 @@
+
+@url = tfgrid.token.price.1
+timeframe** = "hour,day,week,month,year" (E)
+opening = "0.06008764 USD" (N)
+closing = "0.06008764 USD"(N)
+low = "0.06008764 USD"(N)
+high = "0.06008764 USD" (N)
+time** = "2019/10/01 22:00" (T) 
+
+
+@url = tfgrid.market.1
+total_capitalization = "56341965 USD" (N)
+max_supply = 100000000000 (F)
+potential_revenue_per_token = "0.48 USD" (N)
+total_supply = 750850914 (F)
+circulating_supply = 186046470 (F)
+average_compute_unit_price = "15 USD" (N)
+average_storage_unit_price = "12 USD" (N)
+five_years_network_revenue = "89915106 USD" (N)
+monthly_trading_volume = "1460 USD" (N)
+
+@url = tfgrid.capacity.1
+time = 0 (T)
+compute_units = 19700(I)
+storage_units = 83100(I)
+cores = 14600(I)
+storage = 79000 (I) # in tera bytes
+
+
+

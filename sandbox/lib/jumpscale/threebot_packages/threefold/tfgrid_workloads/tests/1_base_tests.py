@@ -5,20 +5,22 @@ monkey.patch_all(thread=False)
 import logging
 from nacl import signing
 
-import json
-import os
 import binascii
 from Jumpscale import j
-import time
 
 
 def main(self):
-    bcdb = j.data.bcdb.get("tf_workloads")
     customer_signing_key = signing.SigningKey.generate()
     farmer_signing_key = signing.SigningKey.generate()
     signer_signing_key = signing.SigningKey.generate()
-    ph_bcdb = j.data.bcdb.get("threebot_phonebook")
+
+    bcdb = j.servers.threebot.default.bcdb_get("tf_workloads")
+    reservation_model = bcdb.model_get(url="tfgrid.reservation.1")
+    reservation_model.destroy()  # ensure it's empty
+
+    ph_bcdb = j.servers.threebot.default.bcdb_get("threebot_phonebook")
     model = ph_bcdb.model_get(url="threebot.phonebook.user.1")
+    model.destroy()
 
     threebots = [
         {"role": "signer", "pubkey": binascii.hexlify(signer_signing_key.verify_key.encode())},
@@ -29,6 +31,7 @@ def main(self):
     for threebot in threebots:
         tbot = model.new()
         role = threebot["role"]
+        tbot.name = role
         tbot.email = "{}@{}.com".format(role, role)
         tbot.pubkey = threebot["pubkey"]
         tbot.save()
@@ -36,14 +39,36 @@ def main(self):
 
     # TEST01: REGISTER RESERVATION
     reservation_model = bcdb.model_get(url="tfgrid.reservation.1")
+    reservation_model.destroy()
+
     reservation = reservation_model.new()
     reservation.customer_tid = tbots["customer"].id
-    # create volume
+
+    container_model = bcdb.model_get(url="tfgrid.reservation.container.1")
     volume_model = bcdb.model_get(url="tfgrid.reservation.volume.1")
+    zdb_model = bcdb.model_get(url="tfgrid.reservation.zdb.1")
+
+    # create container
+    container = container_model.new()
+    container.node_id = 1
+    container.workload_id = 2
+    container.farmer_tid = tbots["farmer"].id
+    # create volume
     volume = volume_model.new()
+    volume.node_id = 1
+    volume.workload_id = 1
     volume.farmer_tid = tbots["farmer"].id
-    volume.save()
+    # create zdb
+    zdb = zdb_model.new()
+    zdb.node_id = 2
+    zdb.workload_id = 3
+    zdb.farmer_tid = tbots["farmer"].id
+
+    # add workloads to reservation
+    reservation.data_reservation.containers.append(container)
     reservation.data_reservation.volumes.append(volume)
+    reservation.data_reservation.zdbs.append(zdb)
+
     # create sigining request
     request_model = bcdb.model_get(url="tfgrid.reservation.signing.request.1")
     request = request_model.new()
@@ -53,10 +78,10 @@ def main(self):
     reservation.data_reservation.signing_request_provision = request
     reservation.data_reservation.signing_request_delete = request
     reservation.customer_tid = tbots["customer"].id
-    ttime = time.time()
-    reservation.data_reservation.expiration_provisioning = int(ttime + 3 * 60)
-    reservation.data_reservation.expiration_reservation = int(ttime + 5 * 60)
-    reservation.json = json.dumps(reservation.data_reservation._ddict)
+    reservation.data_reservation.expiration_provisioning = int(j.data.time.epoch + 3 * 60)
+    reservation.data_reservation.expiration_reservation = int(j.data.time.epoch + 5 * 60)
+    reservation.json = j.data.serializers.json.dumps(reservation.data_reservation._ddict)
+
     reservation_data = reservation._ddict
     # Register reservation
     cl = j.clients.gedis.get(name="threebot")
@@ -66,22 +91,50 @@ def main(self):
     # TEST02: GET RESERVATION
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)
     assert reservation.next_action == "CREATE"
-    # TEST03: SING RESERVATION
+
+    # TEST03: LIST RESERVATION
+    reservations = cl.actors.workload_manager.reservations_list().reservations
+    assert len(reservations) == 1
+
+    reservations = cl.actors.workload_manager.reservations_list(node_id=1).reservations
+    assert len(reservations) == 1
+
+    reservations = cl.actors.workload_manager.reservations_list(node_id=3).reservations
+    assert len(reservations) == 0
+
+    reservations = cl.actors.workload_manager.reservations_list(epoch=j.data.time.epoch + 1000).reservations
+    assert len(reservations) == 0
+
+    # TEST04: SIGN RESERVATION
+
     signature = customer_signing_key.sign(reservation.json.encode())
     cl.actors.workload_manager.sign_customer(reservation.id, binascii.hexlify(signature.signature))
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)
     assert reservation.next_action == "SIGN"
-    # TEST04: FILL SIGNING REQUESTS
+
+    # TEST05: FILL SIGNING REQUESTS
     signature = signer_signing_key.sign(reservation.json.encode())
     cl.actors.workload_manager.sign_provision(reservation.id, tbots["signer"].id, binascii.hexlify(signature.signature))
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)
     assert reservation.next_action == "PAY"
-    # TEST05: FILL FARMER SIGNATURE
+
+    # TEST06: FILL FARMER SIGNATURE
     signature = farmer_signing_key.sign(reservation.json.encode())
     cl.actors.workload_manager.sign_farmer(reservation.id, tbots["farmer"].id, binascii.hexlify(signature.signature))
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)
     assert reservation.next_action == "DEPLOY"
-    # TEST06: FILL SING DELETE
+
+    # TEST07: LIST WORKLOADS
+    workloads = cl.actors.workload_manager.workloads_list(node_id=1).workloads
+    assert len(workloads) == 2
+
+    workloads = cl.actors.workload_manager.workloads_list(node_id=2).workloads
+    assert len(workloads) == 1
+
+    workloads = cl.actors.workload_manager.workloads_list(node_id=3).workloads
+    assert len(workloads) == 0
+
+    # TEST08: FILL SING DELETE
     signature = signer_signing_key.sign(reservation.json.encode())
     cl.actors.workload_manager.sign_delete(reservation.id, tbots["signer"].id, binascii.hexlify(signature.signature))
     reservation = cl.actors.workload_manager.reservation_get(reservation.id)

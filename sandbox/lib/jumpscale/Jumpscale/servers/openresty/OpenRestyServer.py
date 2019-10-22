@@ -40,7 +40,8 @@ class OpenRestyServer(j.baseclasses.factory_data):
         self.path_cfg = "%s/nginx.conf" % self.path_cfg_dir
         j.sal.fs.createDir(self.path_web)
         j.sal.fs.createDir(self.path_cfg_dir)
-
+        # clean old websites config
+        j.sal.fs.remove("%s/servers" % self.path_cfg_dir)
         self.executor = "tmux"  # only tmux for now
 
         self.install()
@@ -51,6 +52,28 @@ class OpenRestyServer(j.baseclasses.factory_data):
         self.install()
         configtext = j.tools.jinja2.file_render(path=f"{self._dirpath}/templates/nginx.conf", obj=self)
         j.sal.fs.writeFile(self.path_cfg, configtext)
+
+    def get_from_port(self, port, domain=None):
+        """
+        will try to get a website listening on port, if it doesn't exist it will create one
+        :param port: port to search for
+        :return: website
+        """
+
+        for website in self.websites.find():
+            if website.port == port:
+                return website
+        ssl = None
+        if port == 80:
+            ssl = False
+        elif port == 443:
+            ssl = True
+
+        ws = self.websites.get(f"website_{port}", port=port, domain=domain)
+        if ssl != None:
+            ws.ssl = ssl
+
+        return ws
 
     def install(self, reset=False):
         """
@@ -64,7 +87,9 @@ class OpenRestyServer(j.baseclasses.factory_data):
             # get weblib
             url = "https://github.com/threefoldtech/jumpscale_weblibs"
             weblibs_path = j.clients.git.getContentPathFromURLorPath(url, pull=False)
+            import ipdb
 
+            ipdb.set_trace()
             # copy the templates to the right location
             j.sal.fs.copyDirTree("%s/web_resources/" % self._dirpath, self.path_cfg_dir)
 

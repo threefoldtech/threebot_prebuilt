@@ -1,6 +1,7 @@
 from Jumpscale import j
 
 from JumpscaleLibs.clients.tfchain.stub.ExplorerClientStub import TFChainExplorerGetClientStub
+from JumpscaleLibs.clients.tfchain.test_utils import cleanup
 
 
 def main(self):
@@ -10,9 +11,10 @@ def main(self):
     kosmos 'j.clients.tfchain.test(name="wallet_balance")'
     """
 
+    cleanup("dev_unittest_client")
+
     # create a tfchain client for devnet
-    c = j.clients.tfchain.get("mydevclient", network_type="DEV")
-    # or simply `c = j.tfchain.clients.mydevclient`, should the client already exist
+    c = j.clients.tfchain.new("dev_unittest_client", network_type="DEV")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = TFChainExplorerGetClientStub()
@@ -86,3 +88,6 @@ def main(self):
     assert str(remainder) == "196.7655"
     assert str(sum([ci.parent_output.value for ci in inputs])) == "198"
     assert suggested_refund == None  # no refund is suggested, as there are too many sources to pick from (2)
+
+    c.wallets.delete()
+    c.delete()

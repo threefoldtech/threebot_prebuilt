@@ -3,6 +3,7 @@ from Jumpscale import j
 import pytest
 
 from JumpscaleLibs.clients.goldchain.stub.ExplorerClientStub import GoldChainExplorerGetClientStub
+from JumpscaleLibs.clients.goldchain.test_utils import cleanup
 
 
 def main(self):
@@ -12,12 +13,10 @@ def main(self):
     kosmos 'j.clients.goldchain.test(name="wallet_coin_transaction_builder")'
     """
 
-    # delete goldchain devnet client
-    j.clients.goldchain.delete("devnet_unittest_client")
+    cleanup("devnet_unittest_client")
 
     # create a goldchain client for devnet
-    c = j.clients.goldchain.get("devnet_unittest_client", network_type="DEV")
-    # or simply `c = j.goldchain.clients.devnet_unittest_client`, should the client already exist
+    c = j.clients.goldchain.new("devnet_unittest_client", network_type="DEV")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = GoldChainExplorerGetClientStub()
@@ -106,3 +105,6 @@ def main(self):
         .send(data=bytearray(b"binary data can be added as well"))
     )  # source and refund can be added as well
     assert result.submitted  # it is expected the transaction is submitted
+
+    c.wallets.delete()
+    c.delete()

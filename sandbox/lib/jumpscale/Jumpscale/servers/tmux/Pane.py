@@ -123,6 +123,9 @@ class Pane(j.baseclasses.object):
         cmd = 'tmux list-panes -a -F "#{pane_pid} #{pane_id}"'
         cs = self.process_obj_children
 
+        if not self.process_obj_children:
+            return
+
         for child in self.process_obj_children:
             try:
                 child.send_signal(psutil.signal.SIGSTOP.value)

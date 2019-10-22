@@ -1,80 +1,67 @@
 from Jumpscale import j
-import json
+
 
 """
-
+JSX> anew = j.clients.gedis(...., port=8901)
 JSX> anew.actors.alerta.list_alerts() 
 ... a very long list
-JSX> anew.actors.alerta.new_alert(        severity="major", 
-   2         status="new", 
-   3         time=None, 
-   4         environment="ALL", 
-   5         service="JSX", 
-   6         resource="xmonader", 
-   7         event="event 1", 
-   8         value="n/a", 
-   9         messageType="error", 
-  10         text="rafir text")                                                                                        
+JSX> anew.actors.alerta.new_alert(
+   severity=10, 
+   status="new", 
+   environment="ALL", 
+   service="JSX", 
+   resource="xmonader", 
+   event="event 1", 
+   value="n/a", 
+   messageType="error", 
+   text="rafir text") 
 ## actors.default.alerta.new_alert.16c54214bfcd2a5b61f789be085a1d14
 res                 : True
-
-
-
 """
+
+STATES = ["closed", "new", "open"]
+MESSAGE_TYPES = ["error", "info", "warn"]
 
 
 class alerta(j.baseclasses.threebot_actor):
     def _init(self, **kwargs):
+        self.alert_model = j.tools.alerthandler.model
 
-        from random import choice
-
-        alert_schema = """
-        @url = jumpscale.alerta.alert
-
-        severity="" (S)
-        status="" (S)
-        time="" (S)  
-        environment = "" (S)
-        service = "" (S)
-        resource = "" (S)
-        event = "" (S)
-        value = "" (S)
-        messageType = "" (S)
-        text = "" (S)
+    def get_alert(self, alert_id, schema_out=None, user_session=None):
+        """
+        ```in
+        alert_id = (I)
+        ```
 
         """
+        res = self.alert_model.find(id=alert_id)
+        if res:
+            return j.data.serializers.json.dumps(res[0]._ddict)
+        return "{}"
 
-        self.alert_model = j.data.bcdb.system.model_get(schema=alert_schema)
-        # self.alert_model.save()
-        for i in range(100):
-            alert = self.alert_model.new()
-            alert.severity = choice(["critical", "major", "minor", "warning"])
-            alert.status = choice(["closed", "new"])
-            alert.time = j.data.time.epoch
-            alert.environment = choice(["production", "staging", "testing", "infrastructure", "all"])
-            alert.service = choice(["jsx", "0-os", "portal", "threebot"])
-            alert.resource = choice(["xmonader", "rafy", "andrew"])
-            alert.event = choice(["event 1", "event 2"])
-            alert.value = "n/a"
-            alert.messageType = choice(["error", "information", "warning"])
-            alert.text = choice(["text 1 errr", "text 2 errr", "text 3 err"])
-
-            alert.save()
-
-    def list_alerts(self):
+    def list_alerts(self, schema_out=None, user_session=None):
         alerts = j.data.serializers.json.dumps({"alerts": [alert._ddict for alert in self.alert_model.find()]})
         return alerts
 
-    def list_alerts_by_env(self, env_name="all", schema_out=None):
+    def list_alerts_by_env(self, env_name="all", schema_out=None, user_session=None):
         """
         ```in
         env_name = (S)
         ```
 
         """
-        alerts = {
-            "alerts": [alert._ddict for alert in self.alert_model.find() if alert.environment == env_name.lower()]
-        }
+
+        if env_name.lower() == "all":
+            alerts = self.alert_model.find()
+        else:
+            alerts = self.alert_model.find(environment=env_name)
+
+        def map_enums(a):
+            a["status"] = STATES[a["status"]]
+            a["messageType"] = MESSAGE_TYPES[a["messageType"]]
+            return a
+
+        alerts = {"alerts": [map_enums(alert._ddict) for alert in alerts]}
 
         print("ALERTS: ", alerts)
         response = {"result": alerts, "error_code": "", "error_message": ""}
@@ -82,7 +69,7 @@ class alerta(j.baseclasses.threebot_actor):
 
     def new_alert(
         self,
-        severity="major",
+        severity=10,
         status="new",
         time=None,
         environment="all",
@@ -93,28 +80,26 @@ class alerta(j.baseclasses.threebot_actor):
         messageType="error",
         text="error text",
         schema_out=None,
+        user_session=None,
     ):
         """
-        ```in 
-        severity="" (S)
-        status="" (S)
-        time="" (S)  
+        ```in
+        severity=0 (I)
+        status="closed,new,open" (E)
         environment = "" (S)
         service = "" (S)
         resource = "" (S)
         event = "" (S)
         value = "" (S)
-        messageType = "" (S)
+        messageType = "error,info,warn" (E)
         text = "" (S)
         ```
 
         ```out
         res = (B)
-        ```        
+        ```
 
         """
-
-        print(locals())
         alert = self.alert_model.new()
         alert.severity = severity
         alert.status = status
@@ -133,11 +118,16 @@ class alerta(j.baseclasses.threebot_actor):
         res.res = True
         return res
 
-    def delete_all_alerts(self):
-        # TODO: implement
-        response = {"result": True, "error_code": "", "error_message": ""}
-        return j.data.serializers.json.dumps(response)
+    def delete_all_alerts(self, schema_out=None, user_session=None):
+        self.alert_model.destroy()
 
-    def delete_alert(self, alert_id):
-        # TODO: implement
-        return True
+    def delete_alert(self, alert_id, schema_out=None, user_session=None):
+        """
+        ```in
+        alert_id = (I)
+        ```
+        """
+        try:
+            self.alert_model.delete(alert_id)
+        except:
+            pass

@@ -1,0 +1,15 @@
+@url = email.attachement.1
+name = (S)
+content = (bin)
+contenttype = (S)
+
+@url = email.message.1
+from_email = "" (S)
+to_email = "" (S)
+subject = "" (S)
+attachments = (LO)!email.attachement.1
+body = "" (S)
+htmlbody = "" (S)
+date** = (T)
+priority = (B)
+headers = "" (S)

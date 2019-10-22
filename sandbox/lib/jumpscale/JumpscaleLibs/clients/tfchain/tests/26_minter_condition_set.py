@@ -4,6 +4,7 @@ import pytest
 
 from JumpscaleLibs.clients.tfchain.stub.ExplorerClientStub import TFChainExplorerGetClientStub
 from JumpscaleLibs.clients.tfchain.types.FulfillmentTypes import FulfillmentSingleSignature, FulfillmentMultiSignature
+from JumpscaleLibs.clients.tfchain.test_utils import cleanup
 
 
 def main(self):
@@ -13,9 +14,11 @@ def main(self):
     kosmos 'j.clients.tfchain.test(name="minter_condition_set")'
     """
 
+    cleanup("dev_unittest_client")
+
     # create a tfchain client for devnet
-    c = j.clients.tfchain.get("mydevclient", network_type="DEV")
-    # or simply `c = j.tfchain.clients.mydevclient`, should the client already exist
+    c = j.clients.tfchain.new("dev_unittest_client", network_type="DEV")
+    # or simply `c = j.tfchain.clients.dev_unittest_client`, should the client already exist
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = TFChainExplorerGetClientStub()
@@ -116,11 +119,11 @@ def main(self):
     )
 
     # if an invalid recipient is given it, a ValueError or TypeError is raised
-    with pytest.raises(ValueError):
+    with pytest.raises(j.exceptions.Value):
         w.minter.definition_set(minter=None)
-    with pytest.raises(ValueError):
+    with pytest.raises(j.exceptions.Value):
         w.minter.definition_set(minter="0123bla")
-    with pytest.raises(TypeError):
+    with pytest.raises(j.exceptions.Value):
         w.minter.definition_set(minter=1)
 
     # (3) if the wallet has no powers to redefine the powers,
@@ -132,3 +135,6 @@ def main(self):
     assert not result.transaction.is_fulfilled()
     assert not result.transaction.mint_fulfillment.is_fulfilled(parent_condition=c.minter.condition_get())
     assert isinstance(result.transaction.mint_fulfillment, FulfillmentSingleSignature)
+
+    c.wallets.delete()
+    c.delete()

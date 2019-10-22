@@ -1,0 +1,23 @@
+<html>
+<head>
+<script type="text/javascript" src="http://172.19.0.4/ds-vpath/web-apps/apps/api/documents/api.js?ver=10.0.4.959"></script>
+
+
+</head>
+<body>
+<div id="placeholder"></div>
+<script type="text/javascript">
+
+config = {
+    "document": {
+        "fileType": "{{extension}}",
+        "key": "{{key}}",
+        "title": "{{title}}",
+        "url": window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + "/api/raw/{{title}}"
+    }
+}
+var docEditor = new DocsAPI.DocEditor("placeholder", config);
+console.log(config)
+</script>
+</body>
+</html>

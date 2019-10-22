@@ -1,9 +1,14 @@
 from Jumpscale import j
+import gevent
+import os
+
+DIR_SYNC_TIME = 3600 * 4
 
 
 class Package(j.baseclasses.threebot_package):
-    def _init(self, **kwargs):
-        self.bcdb = self._package.threebot_server.bcdb_get("tf_directory")
+    @property
+    def bcdb(self):
+        return self._package.threebot_server.bcdb_get("tf_directory")
 
     def prepare(self):
         """
@@ -17,9 +22,33 @@ class Package(j.baseclasses.threebot_package):
         called when the 3bot starts
         :return:
         """
-        self.bcdb.models_add(path=self.package_root + "/models")
+        server = self.openresty
+        server.install(reset=False)
+        server.configure()
 
-        self.gedis_server.actors_add(j.sal.fs.joinPaths(self.package_root, "actors"))
+        website = server.get_from_port(443)
+
+        locations = website.locations.get("cockpit_locations")
+
+        website_location = locations.locations_spa.new()
+        website_location.name = "cockpit"
+        website_location.path_url = "/cockpit"
+        website_location.use_jumpscale_weblibs = False
+        fullpath = j.sal.fs.joinPaths(self.package_root, "frontend/")
+        website_location.path_location = fullpath
+
+        locations.configure()
+        website.configure()
+
+    def sync_directory(self):
+        sync_dir = j.tools.codeloader.load(path=os.path.join(self.package_root, "jobs", "sync_directory.py"))
+        job = j.servers.myjobs.schedule(sync_dir)
+        try:
+            job.wait()
+        except Exception as e:
+            j.errorhandler.exception_handle(e, die=False)
+
+        gevent.spawn_later(DIR_SYNC_TIME, self.sync_directory)
 
     def stop(self):
         """

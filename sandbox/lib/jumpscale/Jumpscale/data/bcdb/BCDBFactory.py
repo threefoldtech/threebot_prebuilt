@@ -109,12 +109,30 @@ class BCDBFactory(j.baseclasses.factory_testtools):
             res.append(bcdb)
         return res
 
-    def index_rebuild(self):
+    def index_rebuild(self, name=None, storclient=None):
         """
-        kosmos 'j.data.bcdb.index_rebuild()'
+        kosmos 'j.data.bcdb.index_rebuild(name="system")'
+
+        can get a stor client by e.g.
+            storclient = j.clients.sqlitedb.client_get(namespace="system")
+            storclient = j.clients.zdb.client_get...
+
+        if you use a stor client then the metadata for BCDB will not be used
+
+
         :return:
         """
-        for bcdb in self.instances:
+        if not name:
+            for bcdb in self.instances:
+                bcdb.index_rebuild()
+        elif storclient:
+            bcdb = self._get(name, storclient=storclient)
+            bcdb.index_rebuild()
+        elif name == "system":
+            bcdb = self.get_system()
+            bcdb.index_rebuild()
+        else:
+            bcdb = self.get(name=name)
             bcdb.index_rebuild()
 
     def check(self):
@@ -217,16 +235,13 @@ class BCDBFactory(j.baseclasses.factory_testtools):
             bcdb = self._children[name]
             assert name in self._config
             return bcdb
-        elif storclient:
-            if not self.exists(name=name):
-                return self.new(name=name, storclient=storclient, reset=reset)
-            else:
-                return self._get(name=name, storclient=storclient, reset=reset)
-        elif name in self._config:
+
+        if name in self._config and not storclient:
             storclient = self._get_storclient(name)
-            return self._get(name=name, storclient=storclient, reset=reset)
+        if not self.exists(name=name):
+            return self.new(name=name, storclient=storclient, reset=reset)
         else:
-            raise j.exceptions.Input("could not find bcdb with name:%s" % name)
+            return self._get(name=name, storclient=storclient, reset=reset)
 
     def _get_vfs(self):
         from .BCDBVFS import BCDBVFS
@@ -248,8 +263,6 @@ class BCDBFactory(j.baseclasses.factory_testtools):
         elif data["type"] == "rdb":
             storclient = j.clients.rdb.client_get(namespace=data["namespace"], redisconfig_name="core")
         elif data["type"] == "sdb":
-            if "type" in data:
-                data.pop("type")
             storclient = j.clients.sqlitedb.client_get(namespace=data["namespace"])
         else:
             raise j.exceptions.Input("type storclient not found:%s" % data["type"])

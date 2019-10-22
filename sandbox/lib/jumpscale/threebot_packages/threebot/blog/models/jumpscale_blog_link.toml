@@ -1,0 +1,48 @@
+
+@url = jumpscale.blog.link
+title** = "" (S)
+link = "" (S)
+page = "" (S)
+faclass = "" (S)
+
+@url = jumpscale.blog.metadata
+blog_name** = "" (S)
+blog_title** = "JSX blog" (S)
+blog_description = "JSX blog description" (S)
+author_name = "" (S)
+author_email = "" (S)
+author_image = ""
+base_url = "" (S)
+url = "" (S)
+posts_dir = "posts"
+github_username = "" (S)
+github_repo_url** = "" (S)
+nav_links = (LO)      !jumpscale.blog.link
+sidebar_social_links = (LO) !jumpscale.blog.link
+sidebar_links = (LO)  !jumpscale.blog.link
+allow_disqus = true (B) 
+allow_navbar = true (B)
+allow_footer = true (B)
+
+
+@url = jumpscale.blog.post
+title** = "" (S)
+slug** = "" (S)
+content = "" (S)
+content_with_meta = "" (S)
+tags = (LS)
+published_at = "" (S)
+author_name = "" (S)
+author_email = "" (S)
+author_image = "" (S)
+post_image = "" (S)
+excerpt = "" (S)
+
+
+
+@url = jumpscale.blog
+name** = "" (S)
+git_repo_url** = "" (S)
+metadata = (O) !jumpscale.blog.metadata
+posts =  (LO) !jumpscale.blog.post
+pages = (LO) !jumpscale.blog.post

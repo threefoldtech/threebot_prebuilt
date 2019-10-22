@@ -1,6 +1,7 @@
 from Jumpscale import j
 
 from JumpscaleLibs.clients.goldchain.stub.ExplorerClientStub import GoldChainExplorerGetClientStub
+from JumpscaleLibs.clients.goldchain.test_utils import cleanup
 
 
 def main(self):
@@ -10,12 +11,10 @@ def main(self):
     kosmos 'j.clients.goldchain.test(name="balance_drain")'
     """
 
-    # delete goldchain devnet client
-    j.clients.goldchain.delete("devnet_unittest_client")
+    cleanup("devnet_unitttest_client")
 
     # create a goldchain client for devnet
-    c = j.clients.goldchain.get("devnet_unittest_client", network_type="DEV")
-    # or simply `c = j.goldchain.clients.devnet_unittest_client`, should the client already exist
+    c = j.clients.goldchain.new("devnet_unittest_client", network_type="DEV")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = GoldChainExplorerGetClientStub()
@@ -55,14 +54,20 @@ def main(self):
     assert txn.data.value == b"drain the swamp"
     # all inputs should be orinating from the balance's available outputs
     assert [ci.parentid for ci in txn.coin_inputs] == [co.id for co in balance.outputs_available]
-    assert len(txn.coin_outputs) == 1
-    # the only output should be the drain output
+    assert len(txn.coin_outputs) == 2
+    # the only personal output should be the drain output
     co = txn.coin_outputs[0]
     assert co.condition.unlockhash == "01ffd7c884aa869056bfb832d957bb71a0005fee13c19046cebec84b3a5047ee8829eab070374b"
     assert co.value == (balance.available - c.minimum_miner_fee)
+    # the other output is the custody fee
+    co = txn.coin_outputs[1]
+    assert co.condition.unlockhash == "800000000000000000000000000000000000000000000000000000000000000000af7bedde1fea"
+    assert co.value == balance.custody_fee_debt_unlocked
     # no block stake inputs or outputs are obviously defined
     assert len(txn.blockstake_inputs) == 0
     assert len(txn.blockstake_outputs) == 0
 
     # NOTE: balance.drain also takes an optional parameter 'unconfirmed` which is False by default,
     # if True unconfirmed outputs will also be used when available.
+
+    c.delete()

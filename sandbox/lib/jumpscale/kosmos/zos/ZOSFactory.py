@@ -18,4 +18,4 @@ class ZOSCmdFactory(j.baseclasses.object_config_collection_testtools):
         """
         # node = self.zosnodes.mynode
 
-        j.shell()
+        # j.shell()

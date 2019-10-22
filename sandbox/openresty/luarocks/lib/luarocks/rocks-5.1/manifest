@@ -15,16 +15,16 @@ commands = {
       "moonscript/0.5.0-1"
    },
    ["resty-auto-ssl/dehydrated"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty-auto-ssl/letsencrypt_hooks"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty-auto-ssl/sockproc"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty-auto-ssl/start_sockproc"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty-repl"] = {
       "lua-resty-repl/0.0.6-0"
@@ -265,10 +265,21 @@ dependencies = {
       }
    },
    ["lua-resty-auto-ssl"] = {
-      ["0.12.0-1"] = {
+      ["0.13.1-1"] = {
          {
             constraints = {},
             name = "lua-resty-http"
+         },
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     1, 1, 0, string = "1.1.0"
+                  }
+               }
+            },
+            name = "shell-games"
          }
       }
    },
@@ -514,6 +525,9 @@ dependencies = {
             name = "lpeg"
          }
       }
+   },
+   ["shell-games"] = {
+      ["1.1.0-1"] = {}
    }
 }
 modules = {
@@ -1070,55 +1084,61 @@ modules = {
       "lpeg/1.0.2-1"
    },
    ["resty.auto-ssl"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.init_master"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.init_worker"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.jobs.renewal"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.json_adapters.cjson"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.json_adapters.dkjson"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.servers.challenge"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.servers.hook"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.ssl_certificate"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.ssl_providers.lets_encrypt"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.storage"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.storage_adapters.file"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.storage_adapters.redis"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
-   ["resty.auto-ssl.utils.run_command"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+   ["resty.auto-ssl.utils.parse_openssl_time"] = {
+      "lua-resty-auto-ssl/0.13.1-1"
+   },
+   ["resty.auto-ssl.utils.random_seed"] = {
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.utils.shell_execute"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
+   },
+   ["resty.auto-ssl.utils.shuffle_table"] = {
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.utils.start_sockproc"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.auto-ssl.vendor.shell"] = {
-      "lua-resty-auto-ssl/0.12.0-1"
+      "lua-resty-auto-ssl/0.13.1-1"
    },
    ["resty.evp"] = {
       "lua-resty-jwt/0.2.0-0"
@@ -1224,6 +1244,9 @@ modules = {
    },
    ["resty.session.strategies.regenerate"] = {
       "lua-resty-session/2.24-1"
+   },
+   ["shell-games"] = {
+      "shell-games/1.1.0-1"
    },
    socket = {
       "luasocket/3.0rc1-2"
@@ -1528,7 +1551,7 @@ repository = {
       }
    },
    ["lua-resty-auto-ssl"] = {
-      ["0.12.0-1"] = {
+      ["0.13.1-1"] = {
          {
             arch = "installed",
             commands = {
@@ -1538,7 +1561,8 @@ repository = {
                ["resty-auto-ssl/start_sockproc"] = "resty-auto-ssl/start_sockproc"
             },
             dependencies = {
-               ["lua-resty-http"] = "0.15-0"
+               ["lua-resty-http"] = "0.15-0",
+               ["shell-games"] = "1.1.0-1"
             },
             modules = {
                ["resty.auto-ssl"] = "resty/auto-ssl.lua",
@@ -1554,8 +1578,10 @@ repository = {
                ["resty.auto-ssl.storage"] = "resty/auto-ssl/storage.lua",
                ["resty.auto-ssl.storage_adapters.file"] = "resty/auto-ssl/storage_adapters/file.lua",
                ["resty.auto-ssl.storage_adapters.redis"] = "resty/auto-ssl/storage_adapters/redis.lua",
-               ["resty.auto-ssl.utils.run_command"] = "resty/auto-ssl/utils/run_command.lua",
+               ["resty.auto-ssl.utils.parse_openssl_time"] = "resty/auto-ssl/utils/parse_openssl_time.lua",
+               ["resty.auto-ssl.utils.random_seed"] = "resty/auto-ssl/utils/random_seed.lua",
                ["resty.auto-ssl.utils.shell_execute"] = "resty/auto-ssl/utils/shell_execute.lua",
+               ["resty.auto-ssl.utils.shuffle_table"] = "resty/auto-ssl/utils/shuffle_table.lua",
                ["resty.auto-ssl.utils.start_sockproc"] = "resty/auto-ssl/utils/start_sockproc.lua",
                ["resty.auto-ssl.vendor.shell"] = "resty/auto-ssl/vendor/shell.lua"
             }
@@ -1856,6 +1882,18 @@ repository = {
                ["pgmoon.json"] = "pgmoon/json.lua",
                ["pgmoon.socket"] = "pgmoon/socket.lua",
                ["pgmoon.util"] = "pgmoon/util.lua"
+            }
+         }
+      }
+   },
+   ["shell-games"] = {
+      ["1.1.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ["shell-games"] = "shell-games.lua"
             }
          }
       }

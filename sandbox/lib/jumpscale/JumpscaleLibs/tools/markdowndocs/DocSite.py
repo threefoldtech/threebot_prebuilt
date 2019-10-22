@@ -1,6 +1,7 @@
+from urllib.parse import urlparse
 from Jumpscale import j
 from .Doc import Doc
-from .Link import GithubLinker
+from .Link import Linker, MarkdownLinkParser
 
 JSBASE = j.baseclasses.object
 
@@ -78,6 +79,10 @@ class DocSite(j.baseclasses.object):
         # MARKER FOR INCLUDE TO STOP  (HIDE)
 
     @property
+    def host(self):
+        return urlparse(self.metadata["repo"]).hostname
+
+    @property
     def account(self):
         return self.git and self.git.account
 
@@ -106,14 +111,14 @@ class DocSite(j.baseclasses.object):
             and custom_link.branch != self.branch
         )
 
-    def get_real_source(self, custom_link, linker=None):
+    def get_real_source(self, custom_link, host=None):
         """
         get the source of the data (only works for github and local paths for now)
 
         :param custom_link: custom link
         :type custom_link: CustomLink
-        :param linker: a linker instance, defaults to GithubLinker
-        :type linker: Linker, optional
+        :param host: host, defaults to githib.com
+        :type host: str
         :return: a path or a full link
         :rtype: str
         """
@@ -123,8 +128,10 @@ class DocSite(j.baseclasses.object):
 
         account = custom_link.account or self.account
         repo = custom_link.repo or self.repo
-        if not linker:
-            linker = GithubLinker(account, repo)
+        if not host:
+            host = "github.com"
+
+        linker = Linker(host, account, repo)
 
         if custom_link.reference:
             return linker.issue(custom_link.reference)
@@ -137,6 +144,33 @@ class DocSite(j.baseclasses.object):
 
         branch = custom_link.branch
         return linker.tree(custom_link.path, branch=branch)
+
+    def get_real_link(self, custom_link, host=None):
+        """
+        get real link of custom link as a url
+        """
+        repo = self.get_real_source(custom_link, host)
+        if not MarkdownLinkParser(repo).is_url:
+            # not an external url, it's a relative link inside this docsite, keep as is
+            return custom_link.path
+        else:
+            # the real source is a url outside this docsite
+            # get a new link and docsite
+            host = j.clients.git.getGitRepoArgs(repo)[0]
+            new_link = Linker.to_custom_link(repo, host)
+            # to match any path, start with root `/`
+            url = Linker(host, new_link.account, new_link.repo).tree("/")
+            docsite = j.tools.markdowndocs.load(url, name=new_link.repo)
+            custom_link = new_link
+
+        try:
+            included_doc = docsite.doc_get(custom_link.path)
+            full_path = included_doc.path
+        except j.exceptions.Base:
+            full_path = docsite.file_get(custom_link.path)
+
+        path = full_path.replace(j.clients.git.findGitPath(full_path), "")
+        return Linker(custom_link.host, custom_link.account, custom_link.repo).tree(path, branch=custom_link.branch)
 
     @property
     def urls(self):
@@ -305,6 +339,7 @@ class DocSite(j.baseclasses.object):
             "mov",
             "py",
             "svg",
+            "json",
         ]:
             self._log_debug("found file:%s" % path)
             base = self._clean(base)
@@ -331,8 +366,16 @@ class DocSite(j.baseclasses.object):
         """
         self.load()
         name = self._clean(name)
+
         if name in self.files:
             return self.files[name]
+
+        name = name.replace(j.sal.fs.getFileExtension(name), "")
+        for path in self.files.values():
+            partial_path = path.lower().replace(j.sal.fs.getFileExtension(path), "")
+            if partial_path.endswith(name):
+                return path
+
         if die:
             raise j.exceptions.Input(message="Did not find file:%s in %s" % (name, self))
         return None
@@ -398,7 +441,7 @@ class DocSite(j.baseclasses.object):
                 break
 
         if die:
-            raise j.exceptions.Input(message="Cannot find doc with name:%s (nr docs found:%s)" % (name, nr), level=1)
+            raise j.exceptions.Input(message="Cannot find doc with name:%s (nr docs found:%s)" % (name, nr))
         else:
             return None
 
@@ -604,6 +647,10 @@ class DocSite(j.baseclasses.object):
         j.sal.bcdbfs.file_write(dest + "/.data", data_json, append=False)
         j.sal.fs.createDir(dest)
         j.sal.fs.writeFile(dest + "/.data", data_json, append=False)
+
+    @property
+    def metadata(self):
+        return j.data.serializers.json.loads(j.sal.fs.readFile(self.outpath + "/.data"))
 
     def write(self, reset=False):
         self.load()

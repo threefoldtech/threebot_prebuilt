@@ -1,357 +1,109 @@
+# sapper-template
 
-This is a tool which is used to <b> auto highlight</b> your code and allow you to <b>share</b> with friends using an auto generated URL
+The default [Sapper](https://github.com/sveltejs/sapper) template, available for Rollup and webpack.
 
-# Features
-* Auto Highlight code
-* Share code
-* Download code
-* Copy code
 
-## svelte app
+## Getting started
 
-This is a project template for [Svelte](https://svelte.dev) apps. It lives at https://github.com/sveltejs/template.
 
-To create a new project based on this template using [degit](https://github.com/Rich-Harris/degit):
+### Using `degit`
+
+[`degit`](https://github.com/Rich-Harris/degit) is a scaffolding tool that lets you create a directory from a branch in a repository. Use either the `rollup` or `webpack` branch in `sapper-template`:
 
 ```bash
-npx degit sveltejs/template svelte-app
-cd svelte-app
+# for Rollup
+npx degit "sveltejs/sapper-template#rollup" my-app
+# for webpack
+npx degit "sveltejs/sapper-template#webpack" my-app
 ```
 
-*Note that you will need to have [Node.js](https://nodejs.org) installed.*
+
+### Using GitHub templates
+
+Alternatively, you can use GitHub's template feature with the [sapper-template-rollup](https://github.com/sveltejs/sapper-template-rollup) or [sapper-template-webpack](https://github.com/sveltejs/sapper-template-webpack) repositories.
 
 
-## Get started
+### Running the project
 
-Install the dependencies...
-
-```bash
-cd svelte-app
-npm install
-```
-
-...then start [Rollup](https://rollupjs.org):
+However you get the code, you can install dependencies and run the project in development mode with:
 
 ```bash
+cd my-app
+npm install # or yarn
 npm run dev
 ```
 
-Navigate to [localhost:5000](http://localhost:5000). You should see your app running. Edit a component file in `src`, save it, and reload the page to see your changes.
-## project structure 
-```
-.
-├── back-end
-│   ├── Api.py
-│   └── views
-│       └── 404.tpl
-├── front-end
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── public
-│   │   ├── favicon.png
-│   │   ├── global.css
-│   │   └── index.html
-│   ├── rollup.config.js
-│   └── src
-│       ├── App.svelte
-│       ├── components
-│       │   ├── HighlightedCode.svelte
-│       │   ├── NotFound.svelte
-│       │   ├── OriginalCode.svelte
-│       │   └── SharedCode.svelte
-│       ├── main.js
-│       ├── Navigation.svelte
-│       └── routes.js
-├── README.md
-└── tree
+Open up [localhost:3000](http://localhost:3000) and start clicking around.
 
-6 directories, 18 files
-```
+Consult [sapper.svelte.dev](https://sapper.svelte.dev) for help getting started.
 
-## Routing between components
-- Install the dependencies for external router **svelte-spa-router**...
 
-```bash
-npm install svelte-spa-router
-```
+## Structure
 
-- Register your routes to the component
-```javascript
-let routes
-routes = new Map()
-routes.set('/highlight', OriginalCode)
-routes.set('/share/:codeId', SharedCode)
-routes.set('/', OriginalCode)
-routes.set('*', NotFound)
+Sapper expects to find two directories in the root of your project —  `src` and `static`.
+
+
+### src
+
+The [src](src) directory contains the entry points for your app — `client.js`, `server.js` and (optionally) a `service-worker.js` — along with a `template.html` file and a `routes` directory.
+
+
+#### src/routes
+
+This is the heart of your Sapper app. There are two kinds of routes — *pages*, and *server routes*.
+
+**Pages** are Svelte components written in `.svelte` files. When a user first visits the application, they will be served a server-rendered version of the route in question, plus some JavaScript that 'hydrates' the page and initialises a client-side router. From that point forward, navigating to other pages is handled entirely on the client for a fast, app-like feel. (Sapper will preload and cache the code for these subsequent pages, so that navigation is instantaneous.)
+
+**Server routes** are modules written in `.js` files, that export functions corresponding to HTTP methods. Each function receives Express `request` and `response` objects as arguments, plus a `next` function. This is useful for creating a JSON API, for example.
+
+There are three simple rules for naming the files that define your routes:
+
+* A file called `src/routes/about.svelte` corresponds to the `/about` route. A file called `src/routes/blog/[slug].svelte` corresponds to the `/blog/:slug` route, in which case `params.slug` is available to the route
+* The file `src/routes/index.svelte` (or `src/routes/index.js`) corresponds to the root of your app. `src/routes/about/index.svelte` is treated the same as `src/routes/about.svelte`.
+* Files and directories with a leading underscore do *not* create routes. This allows you to colocate helper modules and components with the routes that depend on them — for example you could have a file called `src/routes/_helpers/datetime.js` and it would *not* create a `/_helpers/datetime` route
+
+
+### static
+
+The [static](static) directory contains any static assets that should be available. These are served using [sirv](https://github.com/lukeed/sirv).
+
+In your [service-worker.js](src/service-worker.js) file, you can import these as `files` from the generated manifest...
+
+```js
+import { files } from '@sapper/service-worker';
 ```
 
-For more information about the router check <https://www.npmjs.com/package/svelte-spa-router>
-
-## Working on front-end
-* Add all the front-end libraries <b> example</b> ```Bootstrap and Font awesome``` in ```/public/index.html```
-
-* Create navigation component <b>example</b> ```front-end/src/Navigation.svelte``` and import this component in ```front-end/src/App.svelte``` <b>example</b> ```import Navigation from './Navigation.svelte';```to use this component ```<Navigation />```
-
-```html
-<div>
-	<nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
-		<a class="navbar-brand" href="#">Sharable Highlited Code</a>
-		<button
-			class="navbar-toggler"
-			type="button"
-			data-toggle="collapse"
-			data-target="#navbarText"
-			aria-controls="navbarText"
-			aria-expanded="false"
-			aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon" />
-		</button>
-		<div class="collapse navbar-collapse" id="navbarText">
-			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active">
-					<a class="nav-link" href="/">
-						Home
-						<span class="sr-only">(current)</span>
-					</a>
-				</li>
-			</ul>
-			<span class="navbar-text">
-				We Share your code and keep the Highlights
-			</span>
-		</div>
-	</nav>
-</div>
-
-```
-
-* Create  ```front-end/src/components/OriginalCode.svelte``` component which contain all the required logic to get the orginal code and highlight it
-```html
-<div class="row">
-	<!--[Left-Side]-->
-	<div class="col-sm-6">
-		<!--[Content]-->
-		<div class="row">
-			<div class="col-sm-12">
-				<textarea
-					id="original-code"
-					rows="25"
-					cols="95"
-					bind:value={originalCode} />
-			</div>
-		</div>
-		<!--[BTNs]-->
-		<div class="d-flex justify-content-between mt-4">
-			<!--[Submit-BTN]-->
-			<div>
-				<button
-					type="button"
-					on:click={() => highlightCode(originalCode)}
-					class="btn btn-dark btn-lg">
-					Submit
-				</button>
-			</div>
-			<!--[Download-BTN]-->
-			<div>
-				<button
-					type="button"
-					class="btn btn-dark btn-lg"
-					on:click={() => downloadCode(originalCode)}>
-					Download
-				</button>
-			</div>
-			<!--[Submit-Copy]-->
-			<div >
-				<button
-					class="btn btn-dark btn-lg"
-					on:click={() => copyToClipboard('original-code')}>
-					<i class="far fa-copy" />
-				</button>
-			</div>
-		</div>
-		<!--[Sharabe-Link]-->
-		{#if shareableUrl != ''}
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="d-flex mt-5 align-items-center">
-						<!--[Display-URL]-->
-						<div class="h3" id="shareable-url">{shareableUrl}</div>
-						<div>
-							<!--[Copy-BTN]-->
-							<button
-								class="btn btn-grey ml-3"
-								on:click={() => copyToClipboard('shareable-url')}>
-								<i class="far fa-copy" />
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		{/if}
-
-	</div>
-	<!--[Right-Side]-->
-	<div class="col-sm-6">
-		<HighlightedCode {highlightedCode} />
-	</div>
-</div>
-``` 
-
-* Create ```front-end/src/components/NotFound.svelte``` component to handle the not found pages
-```
-<h2>Not Found</h2>
-<h3>Oops, this route doesn't exist!</h3>
-```
-
-* Create  ```front-end/src/components/SharedCode.svelte``` component which contain all the required logic to all the user to get the shared code from the API in bottle server
-```javascript
-function getSharedCode(codeId) {
-		axios
-			.get('http://localhost:8080/api/code/get-shared-code/' + codeId)
-			.then(function(response) {
-				// handle success
-                //call highlitedCode
-                
-                //Get the orginal code from the response to be highlighted
-				let actualCode = response.data.code;
-				highlightCode(actualCode);
-			})
-			.catch(function(error) {
-				// handle error
-				console.log(error);
-			})
-			.finally(function() {
-				// always executed
-			});
-	}
-```
-* Create ```front-end/src/components/HighlightedCode.svelte``` component which will contain the logic to render the Highlighted code.
-```html
-<script>
-	export let highlightedCode;
-</script>
-	<!--[Highlighted-Code]-->
-	{#if highlightedCode.value}
-		<pre>
-			<code class="hljs">
-				{@html highlightedCode.value}
-			</code>
-		</pre>
-	{/if}
-```
-* In code highlighting, I have used <b>highlighjs library</b>, to install ```npm install highlight.js```, import this library ```	import hljs from 'highlight.js';```, call ```hljs.initHighlightingOnLoad();``` to attache highlighting to the page load event and call ```highlightAuto(value, languageSubset)``` to get the markup that will highligh the code
-```
-highlightedCode = hljs.highlightAuto(originalCode);
-```
-to render it it must be in ```<pre>``` and ```<code>``` tags 
-```html
-<pre>
-	<code class="hljs">
-	    {@html highlightedCode.value}
-	</code>
-</pre>
-```
-
-* In requests handling to deal with APIs, I have used <b>axios library</b>
-, to install ```npm install axios```, import it ```	import axios from 'axios';``` and then you will be able to do requests to the APIs.</br>
-To do <b>POST Request</b>
-```javascript
-axios
-	.post(postHighightedCodeApiUrl, {
-		code: originalCode,
-	})
-	.then(function(response) {
-		shareableUrl = 'http://localhost:5000/#/share/' response.data;
-	})
-	.catch(function(error) {
-	});
-```
- To do <b>GET Request</b>
-
- ```javascript
- axios
-	.get('http://localhost:8080/api/code/get-shared-code/' codeId)
-	.then(function(response) {
-		    // handle success
-            //call highlitedCode
-            //Get the orginal code from the response to be highlighted
-		let actualCode = response.data.code;
-		highlightCode(actualCode);
-	})
-	.catch(function(error) {
-		// handle error
-		console.log(error);
-	})
-	.finally(function() {
-		// always executed
-	});
- ```
-## Working on back-end
-* Create python file <b>example</b> ```back-end/UrlApi.py``` which will contain the code to handle the APIs
-
-* Install bottle Web FrameWork ```pip install bottle```
-
-* Import what you need from the server in the python file <b>example</b> ```from bottle import route``` then create your APIs to handle the comming requests 
-```python
-@app.route('/api/code/add-highlighted-code', method=['OPTIONS', 'GET', 'POST'])
-@enable_cors
-def add_Highlighted_code():
-    """
-    Add the highlighted code to the Redis database
-    """
-    if request.method == "POST":
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Content-type'] = 'application/json'
-    data = request.json['code']
-    encodedData = stringToBase64(data)
-    generatedVal = str(generate_random_no())
-    # add to redis data base
-    add_highlighted_code(radndomNo=generatedVal,
-                         data=encodedData)
-    return generatedVal
-```
-* Create random number genrator which will create the random number used in URL creation for sharing  ```import random```  and <b>example</b> for the logic 
-```python
-def generate_random_no():
-    random.seed(a=None)
-    return randint(0, 1000000)  # randint is inclusive at both ends
-```
-
-* Install Redis in your system 
-``` bash
-    sudo apt update
-    sudo apt install redis-server
-```
-
-* Install Redis database in your project ```pip install redis```
-we will store the <b>Random No(URL)</b> (which is randomly generated) and the <b>code</b>
-
-* Import Redis into the python file ```import redis```,Create a Redis client with your configurations 
-```python
-redis_host = "localhost"
-redis_port = 6379
-redis_password = ""
-r = redis.StrictRedis(host=redis_host, port=redis_port,
-                          password=redis_password, decode_responses=True)
-```
- * use Redis commands to store and get the data in Redis database ```        r.set(radndomNo, data)``` and ```r.get(codeId)```
+...so that you can cache them (though you can choose not to, for example if you don't want to cache very large files).
 
 
-## Deploying to the web
+## Bundler config
 
-### With [now](https://zeit.co/now)
+Sapper uses Rollup or webpack to provide code-splitting and dynamic imports, as well as compiling your Svelte components. With webpack, it also provides hot module reloading. As long as you don't do anything daft, you can edit the configuration files to add whatever plugins you'd like.
 
-Install `now` if you haven't already:
+
+## Production mode and deployment
+
+To start a production version of your app, run `npm run build && npm start`. This will disable live reloading, and activate the appropriate bundler plugins.
+
+You can deploy your application to any environment that supports Node 8 or above. As an example, to deploy to [Now](https://zeit.co/now), run these commands:
 
 ```bash
 npm install -g now
-```
-
-Then, from within your project folder:
-
-```bash
-cd public
 now
 ```
 
-As an alternative, use the [Now desktop client](https://zeit.co/download) and simply drag the unzipped project folder to the taskbar icon.
 
+## Using external components
+
+When using Svelte components installed from npm, such as [@sveltejs/svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list), Svelte needs the original component source (rather than any precompiled JavaScript that ships with the component). This allows the component to be rendered server-side, and also keeps your client-side app smaller.
+
+Because of that, it's essential that the bundler doesn't treat the package as an *external dependency*. You can either modify the `external` option under `server` in [rollup.config.js](rollup.config.js) or the `externals` option in [webpack.config.js](webpack.config.js), or simply install the package to `devDependencies` rather than `dependencies`, which will cause it to get bundled (and therefore compiled) with your app:
+
+```bash
+npm install -D @sveltejs/svelte-virtual-list
+```
+
+
+## Bugs and feedback
+
+Sapper is in early development, and may have the odd rough edge here and there. Please be vocal over on the [Sapper issue tracker](https://github.com/sveltejs/sapper/issues).

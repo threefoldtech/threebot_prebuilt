@@ -1,0 +1,19 @@
+
+@url = tf.caldav.user.1
+user_id** = (S)
+collections = (LO) !tf.caldav.collection.1
+
+@url = tf.caldav.collection.1
+collection_id** = (S)
+user_id** = (S)
+props = (S)
+cache = (S)
+items = (LO) !tf.caldav.collection.item.1
+
+
+@url = tf.caldav.collection.item.1
+item_id** = (S)
+user_id** = (S)
+collection_id** = (S)
+content = (S) 
+epoch = (T)

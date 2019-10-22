@@ -67,6 +67,7 @@ class MarkdownLinkParser:
 
     def __init__(self, link, **kwargs):
         self.link = link.strip()
+        self.host = None
         self.account = None
         self.repo = None
         self.branch = None
@@ -75,20 +76,27 @@ class MarkdownLinkParser:
         if self.is_url:
             self.path = link
         else:
-            self.account, other_part = self.get_account()
+            self.host, self.account, other_part = self.get_host_and_account()
             self.repo, branch, self.path, self.marker = self.parse_repo_and_path(other_part)
             self.branch = branch or self.branch
 
-    def get_account(self):
-        """get the account and other part
+    def get_host_and_account(self):
+        """get host, account and other part
 
-        :return: a tuple of (account, other_part), account can be None
+        :return: a tuple of (host, account, other_part), host and account can be None
         :rtype: tuple
         """
-        if self.link.count(":") == 2:
-            account, _, other_part = self.link.partition(":")
-            return account, other_part
-        return None, self.link
+        link = self.link
+        host = None
+
+        if link.count(":") == 3:
+            host, _, link = self.link.partition(":")
+
+        if link.count(":") == 2:
+            account, _, other_part = link.partition(":")
+            return host, account, other_part
+
+        return None, None, self.link
 
     def parse_repo_and_path(self, repo_and_path):
         """parse the repo and path part, repo(branch):path
@@ -148,8 +156,13 @@ class MarkdownLinkParser:
         assert not l.repo
         assert l.path == "docs/test.md"
 
-    def __str__(self):
+        l = MarkdownLinkParser("github.com:threefoldtech:jumpscaleX(dev):docs/test.md")
+        assert l.host == "github.com"
+        assert l.repo == "jumpscaleX"
+        assert l.branch == "dev"
+        assert l.path == "docs/test.md"
 
+    def __str__(self):
         if not self.repo:
             out = "custom link: %s" % self.path
         else:
@@ -161,46 +174,15 @@ class MarkdownLinkParser:
 
 class Linker:
     """
-
+    A genric linker
     """
 
-    HOST = None
-    ISSUE = None
-    PULL_REQUEST = None
-    TREE = None
-
-    def remove_slash(self, arg):
-        return arg.lstrip("/")
-
-    def join(self, *args):
-        if self.HOST:
-            args = (self.HOST, *args)
-
-        args = [self.remove_slash(arg) for arg in args]
-        return j.sal.fs.joinPaths(*args)
-
-    def issue(self, _id):
-        raise j.exceptions.NotImplemented
-
-    def pull_request(self, _id):
-        raise j.exceptions.NotImplemented
-
-    def tree(self, path, branch="master"):
-        pass
-
-    def to_custom_link(self):
-        raise j.exceptions.NotImplemented
-
-
-class GithubLinker(Linker):
-    HOST = "http://github.com"
     ISSUE = "issues/{id}"
     PULL_REQUEST = "pull/{id}"
     TREE = "tree/{branch}"
 
-    GITHUB_LINK_RE = re.compile(
-        r"""
-        (?:http|https)\:\/\/github\.com                 # https://github.com/
+    REPO_LINK_RE = r"""
+        (?:http|https)\:\/\/{host}                         # e.g. github
         (?:\/([^\/]+))                                  # account
         (?:\/([^\/]+))                                  # repo
         (?:                                             # a link to tree/blob
@@ -213,16 +195,34 @@ class GithubLinker(Linker):
                 (.*?)$
             )?
         )?
-    """,
-        re.X | re.IGNORECASE,
-    )
+    """
 
-    def __init__(self, account, repo):
+    def __init__(self, host, account, repo):
+        if not host:
+            host = "github.com"
+        self.host = host.lower()
+        if not self.host.startswith("http"):
+            self.host = "https://" + self.host
+
         self.account = account
         self.repo = repo
 
+    @classmethod
+    def remove_slash(self, arg):
+        return arg.lstrip("/")
+
+    @classmethod
+    def join_parts(cls, *args):
+        args = [cls.remove_slash(arg) for arg in args]
+        return j.sal.fs.joinPaths(*args)
+
+    def join_with_host(self, *args):
+        if self.host:
+            args = (self.host, *args)
+        return self.join_parts(*args)
+
     def join(self, *args):
-        return super(GithubLinker, self).join(self.account, self.repo, *args)
+        return self.join_with_host(self.account, self.repo, *args)
 
     def issue(self, _id):
         return self.join(self.ISSUE.format(id=_id))
@@ -236,24 +236,34 @@ class GithubLinker(Linker):
         return self.join(self.TREE.format(branch=branch), path)
 
     @classmethod
-    def to_custom_link(cls, url):
-        match = cls.GITHUB_LINK_RE.match(url)
+    def get_repo_re(cls, host):
+        return re.compile(cls.REPO_LINK_RE.format(host=host), re.X | re.IGNORECASE)
+
+    @classmethod
+    def to_custom_link(cls, url, host=None):
+        if not host:
+            try:
+                host = j.clients.git.getGitRepoArgs(url)[0]
+            except j.exceptions.Base:
+                host = "github.com"
+
+        match = cls.get_repo_re(host).match(url)
         if not match:
-            raise j.exceptions.Value(f"not a valid github url: '{url}'")
+            raise j.exceptions.Value(f"not a valid {host} url: '{url}'")
 
         account, repo, branch, path = match.groups()
-        link = "%s:%s" % (account, repo)
+        link = f"{host}:{account}:{repo}"
         if branch:
-            link += "(%s)" % branch
+            link += f"({branch})"
         if not path:
             path = ""
-        link += ":%s" % path
+        link += f":{path}"
         return MarkdownLinkParser(link)
 
     @classmethod
-    def replace_branch(cls, url, to_branch):
-        tmp = cls.to_custom_link(url)
-        return cls(tmp.account, tmp.repo).tree(tmp.path, to_branch)
+    def replace_branch(cls, url, to_branch, host):
+        tmp = cls.to_custom_link(url, host)
+        return cls(host, tmp.account, tmp.repo).tree(tmp.path, to_branch)
 
 
 class Link(j.baseclasses.object):
@@ -325,7 +335,7 @@ class Link(j.baseclasses.object):
             parent_dir = external_link
         else:
             parent_path = j.sal.fs.getDirName(path)
-            parent_dir = Linker().join("https://", url.hostname, parent_path)
+            parent_dir = Linker.join_parts("https://", url.hostname, parent_path)
 
         new_docsite = j.tools.markdowndocs.load(parent_dir, name=name)
         new_docsite.write()
@@ -333,7 +343,6 @@ class Link(j.baseclasses.object):
 
     def _process(self):
         self.link_descr, self.link_source = self.parse_markdown(self.source)
-
         if self.should_skip():
             return
 
@@ -344,8 +353,9 @@ class Link(j.baseclasses.object):
             self.link_source_original = self.link_descr.split("@")[1].strip()  # was link to original source
             self.link_descr = self.link_descr.split("@")[0].strip()
 
-        custom_link = MarkdownLinkParser(self.link_source)
-        self.link_source = self.docsite.get_real_source(custom_link)
+        if not self.link_source.lower().strip().startswith("http"):
+            custom_link = MarkdownLinkParser(self.link_source)
+            self.link_source = self.docsite.get_real_link(custom_link, custom_link.host)
 
         if "?" in self.link_source:
             lsource = self.link_source.split("?", 1)[0]
@@ -376,15 +386,6 @@ class Link(j.baseclasses.object):
                 self.cat = "link"
                 if self.docsite.links_verify:
                     self.link_verify()
-
-                # until custom links are clear
-                # if not custom_link.is_url:
-                #     # a custom link that wasn't a full url originally, get its docsite
-                #     self.get_docsite(self.link_source, name=custom_link.repo)
-                #     self.filename = self._clean(Linker().join(custom_link.repo, custom_link.path))
-                # else:
-                #     self.filename = None  # because is e.g. other site
-
         else:
             if self.link_source.strip() == "/":
                 self.link_source = ""
@@ -429,7 +430,12 @@ class Link(j.baseclasses.object):
                     # j.shell()
                     return self.error("found unsupported extension")
 
-            self.filepath = self.doc.docsite.file_get(self.filename, die=False)
+            if self.extension == "md":
+                doc = self.doc.docsite.doc_get(self.filename, die=False)
+                if doc:
+                    self.filepath = doc.path
+            else:
+                self.filepath = self.doc.docsite.file_get(self.filename, die=False)
 
     @property
     def markdown(self):
@@ -457,7 +463,7 @@ class Link(j.baseclasses.object):
             j.sal.bcdbfs.file_write(dest, response, append=False)
 
     def should_skip(self):
-        return any(link in self.link_source for link in SKIPPED_LINKS)
+        return any(link in self.link_source for link in SKIPPED_LINKS) or j.data.types.email.check(self.link_source)
 
     def link_verify(self):
         def do():

@@ -1,0 +1,283 @@
+@import url('https://fonts.googleapis.com/css?family=Ubuntu:300');
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+@keyframes fadeIn{
+	from {opacity: 0;}
+	to {opacity: 1;}
+}
+
+@keyframes fadeOut{
+	from {opacity: 1;}
+	to {opacity: 0;}
+}
+
+@keyframes scaleUp{
+	from {transform: scale(1.0)}
+	from {transform: scale(1.5)}
+}
+
+@keyframes spin{
+	from {transform: translate(-50%,-31%) rotate(0deg);} 
+	to {transform: translate(-50%,-31%) rotate(1080deg);}
+}
+
+@keyframes slideFromLeft{
+	from {left: -30%;}
+	to {left: 50%; transform: translate(-50%, 0);}
+}
+
+@keyframes slideFromRight{
+	from {right: -30%;}
+	to {right: 50%; transform: translate(+50%, 0);}
+}
+
+@keyframes slideUp{
+	from {bottom: 50%;}
+	to {bottom: 120%;}
+}
+
+@keyframes slideDown{
+	from {top: 50%;}
+	to {top: 120%;}
+}
+
+@keyframes bounce-top {
+0% {
+	-webkit-transform: translateY(-45px);
+			transform: translateY(-45px);
+	-webkit-animation-timing-function: ease-in;
+			animation-timing-function: ease-in;
+	opacity: 1;
+}
+8% {
+	opacity: 1;
+}
+13% {
+	-webkit-transform: translateY(-24px);
+			transform: translateY(-24px);
+	-webkit-animation-timing-function: ease-in;
+			animation-timing-function: ease-in;
+}
+22% {
+	-webkit-transform: translateY(-12px);
+			transform: translateY(-12px);
+	-webkit-animation-timing-function: ease-in;
+			animation-timing-function: ease-in;
+}
+27% {
+	-webkit-transform: translateY(-6px);
+			transform: translateY(-6px);
+	-webkit-animation-timing-function: ease-in;
+			animation-timing-function: ease-in;
+}
+31% {
+	-webkit-transform: translateY(-4px);
+			transform: translateY(-4px);
+	-webkit-animation-timing-function: ease-in;
+			animation-timing-function: ease-in;
+}
+8%,
+18%,
+25%,
+29% {
+	-webkit-transform: translateY(0px);
+			transform: translateY(0px);
+	-webkit-animation-timing-function: ease-out;
+			animation-timing-function: ease-out;
+}
+33% {
+	-webkit-transform: translateY(0px);
+			transform: translateY(0px);
+	-webkit-animation-timing-function: ease-out;
+			animation-timing-function: ease-out;
+	opacity: 1;
+}
+66% {
+	opacity: 1;
+}
+100% {
+	opacity: 0;
+}
+}
+
+
+#loader1 {
+	position: absolute;
+	top: 55%;
+	left: 46%;
+	animation-fill-mode: forwards;
+	width: 64px;
+	height: 15px;
+	opacity: 0;
+	z-index: 3;
+	background-color: #111111;
+	animation: bounce-top 3000ms infinite;
+}
+
+#loader2 {
+	position: absolute;
+	top: 50%;
+	left: 46%;
+	animation-fill-mode: forwards;
+	width: 64px;
+	height: 15px;
+	opacity: 0;
+	z-index: 3;
+	background-color: #53C57A;
+	animation: bounce-top 3000ms 1s infinite;
+}
+
+#loader3 {
+	position: absolute;
+	top: 45%;
+	left: 46%;
+	animation-fill-mode: forwards;
+	width: 64px;
+	height: 15px;
+	opacity: 0;
+	z-index: 3;
+	background-color: #4B91D0;
+	animation: bounce-top 3000ms 2s infinite;
+}
+
+#logotype {
+	position: absolute;
+	bottom: 50%;
+	right: 0%;
+	transform: translate(100%, 0%);
+	width: 250px;
+	height: 40px;
+	z-index: 3;
+	background-color: black;
+	-webkit-mask: url(http://browser.threefold.io/img/threefold/logotype.svg) no-repeat center;
+	-webkit-mask-size: 100% 100%;
+}
+
+#slogan {
+	position: absolute;
+	top: 50%;
+	left: 0%;
+	transform: translate(-100%, 0%);
+	width: 250px;
+	height: 30px;
+	z-index: 3;
+	background-color: black;
+	-webkit-mask: url(http://browser.threefold.io/img/threefold/slogan.svg) no-repeat center;
+	-webkit-mask-size: 100% 100%;
+}
+
+#upper {
+	position: absolute;
+	bottom: 50%;
+	left:0;
+	z-index: 2;
+	background-color: white;
+	width: 100vw;
+	height: 50vh;
+}
+
+#lower {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	z-index: 2;
+	background-color: white;
+	width: 100vw;
+	height: 50vh;
+}
+
+#watermark {
+	z-index: 0;
+	position: absolute;
+	bottom: 100px;
+	left: 20px;
+	width: 80px;
+	opacity: 0.8;
+	-webkit-user-select: none;
+	-webkit-user-drag: none;
+	pointer-events: none;
+	user-select: none;
+}
+
+body {
+	background: #323232;
+	text-align: center;
+	font-family: 'Ubuntu', sans-serif;
+	font-weight: 300;
+	letter-spacing: .15em;
+	color: #fff;
+	overflow: hidden;
+	background-color: #323232;
+	background-repeat: no-repeat;
+	background-position: center; 
+
+}
+canvas {
+	border: 0px solid #eee;
+}
+
+#container {
+	
+}
+
+#btn {
+	font-family: 'Ubuntu', sans-serif;
+	font-weight: 300;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	background-color: #53C57A;
+	border-radius: 10px;
+	border: none;
+	color: white;
+	padding: 3px 10px 3px 10px;
+}
+#btn_settings {
+	font-family: 'Ubuntu', sans-serif;
+	font-weight: 300;
+	position: fixed;
+	bottom: 0;
+	right: 50px;
+	background-color: #53C57A;
+	border-radius: 10px;
+	border: none;
+	color: white;
+	padding: 3px 10px 3px 10px;
+}
+
+#stats {
+	display: none;
+	background-color: rgba(0,0,0,0.6);
+	position: fixed;
+	bottom: 0;
+	width: 100vw;
+	padding: 3px;
+	color: white;
+}
+
+#settings {
+	display: none;
+	z-index: 3;
+}
+
+#fakeinput{
+	opacity: 0;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+#photo{
+	display: none;
+}
+#search{
+	position:absolute;
+	right: 0px;
+	top: 0px;
+	height: 40px;
+	width: 350px;
+	display: none;
+}

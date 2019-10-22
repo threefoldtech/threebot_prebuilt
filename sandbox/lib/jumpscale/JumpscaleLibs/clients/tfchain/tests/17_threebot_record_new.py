@@ -3,6 +3,7 @@ from Jumpscale import j
 import pytest
 
 from JumpscaleLibs.clients.tfchain.stub.ExplorerClientStub import TFChainExplorerGetClientStub
+from JumpscaleLibs.clients.tfchain.test_utils import cleanup
 
 
 def main(self):
@@ -12,9 +13,10 @@ def main(self):
     kosmos 'j.clients.tfchain.test(name="threebot_record_new")'
     """
 
+    cleanup("dev_unittest_client")
+
     # create a tfchain client for devnet
-    c = j.clients.tfchain.get("mydevclient", network_type="DEV")
-    # or simply `c = j.tfchain.clients.mydevclient`, should the client already exist
+    c = j.clients.tfchain.new("dev_unittest_client", network_type="DEV")
 
     # (we replace internal client logic with custom logic as to ensure we can test without requiring an active network)
     explorer_client = TFChainExplorerGetClientStub()
@@ -116,19 +118,22 @@ def main(self):
 
     # Random seed with insufficient funds to create a new transaction
     DEVNET_POOR_SEED = "merge weekend armed harbor giant exact puppy caution nerve donkey then foam random doll slight front relief want edge rare digital already rib volcano"
-    w = c.wallets.new("mywallet2", seed=DEVNET_POOR_SEED)
+    w2 = c.wallets.new("mywallet2", seed=DEVNET_POOR_SEED)
 
     # New wallet should still be on devnet
-    assert w.network_type == "DEV"
+    assert w2.network_type == "DEV"
 
     # Do some checks to ensure the balance is as expected
-    balance = w.balance
+    balance = w2.balance
 
     assert str(balance.available) == "100"
     assert str(balance.locked) == "0"
 
     # now try to create a new record, should fail
     with pytest.raises(j.clients.tfchain.errors.InsufficientFunds):
-        w.threebot.record_new(
+        w2.threebot.record_new(
             months=5, names=["another.example", "another.testcase"], addresses=["some.org", "test.org"], key_index=0
         )
+
+    c.wallets.delete()
+    c.delete()

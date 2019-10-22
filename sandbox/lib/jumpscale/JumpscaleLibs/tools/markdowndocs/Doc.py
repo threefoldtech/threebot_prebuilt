@@ -360,6 +360,8 @@ class Doc(j.baseclasses.object):
             try:
                 part.result = method(self, *args, **kwargs)
             except Exception as e:
+                if hasattr(e, "message"):
+                    e = e.message
                 block = "```python\nERROR IN MACRO*** TODO: *1 ***\nmacro:\n%s\nERROR:\n%s\n```\n" % (macro_name, e)
                 self._log_error(block)
                 self.docsite.error_raise(block, doc=self)
@@ -404,7 +406,6 @@ class Doc(j.baseclasses.object):
         j.sal.fs.createDir(j.sal.fs.joinPaths(self.docsite.outpath, self.path_dir_rel))
 
         for link in self._links:
-            replace = False
             if link.filename:
                 dest_file = j.sal.fs.joinPaths(self.docsite.outpath, self.path_dir_rel, link.filename)
 
@@ -417,7 +418,7 @@ class Doc(j.baseclasses.object):
                 # link.link_source = j.sal.fs.pathRemoveDirPart(dest_file,self.docsite.outpath)
                 # Set link source to the file name only as it gets its files from current page path
                 link.link_source = link.filename
-                md = link.replace_in_txt(md)
+            md = link.replace_in_txt(md)
 
         dest = j.sal.fs.joinPaths(self.docsite.outpath, self.path_dir_rel, self.name) + ".md"
         j.sal.bcdbfs.file_write(dest, md, append=False)

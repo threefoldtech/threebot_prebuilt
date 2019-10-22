@@ -142,6 +142,7 @@ class BuilderThreebot(j.baseclasses.builder):
             self.tools.copyTree(self.DIR_SANDBOX, repo_path)
             git_client = j.clients.git.get(repo_path)
             git_client.commit("update prebuilt file")
+            import ipdb; ipdb.set_trace()
             git_client.push()
 
     def start(self):

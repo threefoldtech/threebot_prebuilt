@@ -101,7 +101,7 @@ class BuilderThreebot(j.baseclasses.builder):
         for bin in bins:
             dir_src = self.tools.joinpaths(j.core.dirs.BINDIR, bin)
             j.tools.sandboxer.libs_sandbox(dir_src, lib_dest, exclude_sys_libs=False)
-
+        
         for dir_src, dir_dest in dirs.items():
             dir_dest = self.tools.joinpaths(self.DIR_SANDBOX, dir_dest)
             self.tools.dir_ensure(dir_dest)
@@ -124,6 +124,7 @@ class BuilderThreebot(j.baseclasses.builder):
         self.tools.dir_ensure(self.DIR_SANDBOX + "/bin")
         self.tools.copyTree("/sandbox/cfg/ssl/", self.DIR_SANDBOX + "/etc/ssl/")
         self.tools.copyTree("/etc/resty-auto-ssl", self.DIR_SANDBOX + "/etc/resty-auto-ssl")
+        self.tools.copyTree("/sandbox/bin", self.DIR_SANDBOX + "/bin")
 
         file = self.tools.joinpaths(j.sal.fs.getDirName(__file__), "templates", "threebot_startup.toml")
         file_dest = self.tools.joinpaths(self.DIR_SANDBOX, ".startup.toml")
@@ -142,7 +143,6 @@ class BuilderThreebot(j.baseclasses.builder):
             self.tools.copyTree(self.DIR_SANDBOX, repo_path)
             git_client = j.clients.git.get(repo_path)
             git_client.commit("update prebuilt file")
-            import ipdb; ipdb.set_trace()
             git_client.push()
 
     def start(self):

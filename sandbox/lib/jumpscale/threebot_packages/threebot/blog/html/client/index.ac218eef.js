@@ -1,0 +1,1 @@
+import{S as s,i as t,s as r,n as e}from"./index.9569dcac.js";function n(s){return{c:e,l:e,m:e,p:e,i:e,o:e,d:e}}function o({params:s}){let t=s.theuser;return this.redirect(302,`${t}/posts`)}export default class extends s{constructor(s){super(),t(this,s,null,n,r,[])}}export{o as preload};

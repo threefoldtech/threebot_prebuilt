@@ -55,6 +55,21 @@ class mail(j.baseclasses.threebot_actor):
         folders = self.bcdb_mailbox.list_folders()
         return folders
 
+    def create_folder(self, name, schema_out=None, user_session=None):
+        """
+        ```in
+        name = (S)
+        ```
+        ```out
+        success = (B)
+        ```
+        """
+
+        self.bcdb_mailbox.create_folder(name)
+        out = schema_out.new()
+        out.success = True
+        return out
+
     def update_folder_name(self, old_name, new_name, schema_out=None, user_session=None):
         """
         ```in

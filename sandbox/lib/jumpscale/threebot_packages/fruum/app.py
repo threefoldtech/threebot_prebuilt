@@ -24,7 +24,7 @@ def setonline(func):
         with sio.session(sid) as session:
             if "user" in session:
                 user = user_model.find(username=session["user"]["username"])[0]
-                user.onboard = int(time.time())
+                user.onboard = str(int(time.time()) * 1000) # Milliseconds
                 user.save()
         return func(sid, *args, **kwargs)
 
@@ -83,7 +83,7 @@ def disconnect(sid):
             if user_id in user_sessions:
                 user_sessions.pop(user_id)
             user = user_model.get(user_id)
-            user.last_logout = int(time.time())
+            user.last_logout = str(int(time.time()) * 1000)
             user.save()
         print("disconnect ", sid)
 
@@ -132,7 +132,7 @@ def auth(sid, data):
             user1.username = "hamdy"
             user1.displayname = "Hamdy Farag"
             user1.email = "hamdy@incubaid.com"
-            user1.created = int(time.time())
+            user1.created = str(int(time.time()) * 1000)
             user1.save()
 
             user2 = user_model.new()
@@ -142,7 +142,7 @@ def auth(sid, data):
             user2.username = "aly"
             user2.displayname = "Aly Aly"
             user2.email = "aly@incubaid.com"
-            user2.created = int(time.time())
+            user2.created = str(int(time.time()) * 1000)
             user2.save()
 
         users = user_model.find(username=data["user"]["id"])
@@ -150,13 +150,20 @@ def auth(sid, data):
             user = users[0]
             if user.blocked:
                 return
-            now = int(time.time())
+            now = str(int(time.time()) * 1000) # Milliseconds
             user.last_login = now
             user.onboard = now
             user.save()
             session["user"] = user._ddict
             user_sessions[user.id] = sid
             sio.emit("fruum:auth", {"user": user._ddict}, room=sid)
+
+        # Enter admin Room, if admin
+        if user.admin:
+            sio.enter_room(sid, 'admins')
+
+        if not user.anonymous:
+            sio.enter_room(sid, 'logged_in')
 
 
 @sio.on("fruum:user:block")
@@ -167,7 +174,7 @@ def block(sid, data):
             user_sid = user_sessions.pop(user_id)
             user = user_model.get(user_id)
             user.blocked = True
-            user.last_logout = int(time.time())
+            user.last_logout = str(int(time.time()) * 1000) # Milliseconds
             user.save()
             sio.emit("fruum:user:block", {"id": user_id})
             sio.emit("disconnect", {}, room=user_sid)
@@ -237,7 +244,7 @@ def view(sid, data):
 @sio.on("fruum:add")
 def add(sid, data):
     with sio.session(sid) as session:
-        now = int(time.time())
+        now = str(int(time.time()) * 1000 )# Milliseconds
 
         doc = doc_model.new()
         doc.app_name = session["app_name"]
@@ -278,7 +285,7 @@ def add(sid, data):
         doc.pop("app_name")
 
         sio.emit("fruum:add", doc, room=sid)
-        sio.emit("fruum:dirty", doc)
+        sio.emit("fruum:dirty", doc, skip_sid=sid)
         sio.emit(
             "fruum:info",
             {
@@ -287,6 +294,7 @@ def add(sid, data):
                 "children_count": parent.children_count,
                 "updated": parent.updated,
             },
+            skip_sid=sid
         )
 
         if doc["type"] == "post" and doc["parent_type"] == "channel":
@@ -336,6 +344,22 @@ def archive(sid, data):
         doc = doc._ddict
         doc["id"] = doc.pop("doc_id")
         sio.emit("fruum:field", doc)
+
+
+@sio.on("fruum:categories")
+def categories(sid, data):
+    with sio.session(sid) as session:
+        sio.emit("fruum:field", {'categories':[]}, sid)
+
+
+@sio.on("fruum:search")
+def search(sid, data):
+    q = data['q']
+    docs = []
+    result = []
+    with sio.session(sid) as session:
+        sio.emit("fruum:field", {'q':q, 'results':docs}, sid)
+
 
 
 @sio.on("fruum:delete")
@@ -400,9 +424,7 @@ def react(sid, data):
         sio.emit("fruum:react", doc)
 
 
-@sio.on("fruum:search")
-def search(sid, data):
-    return "ok"
+
 
 
 @sio.on("fruum:autocomplete")
@@ -415,10 +437,6 @@ def move(sid, data):
     return "ok"
 
 
-@sio.on("fruum:categories")
-def categories(sid, data):
-    return "ok"
-
 
 @sio.on("fruum:typing")
 def typing(sid, data):
@@ -428,7 +446,7 @@ def typing(sid, data):
 
 @sio.on("fruum:onboard")
 def onboard(sid, data):
-    sio.emit("fruum:onboard", data)
+    sio.emit("fruum:onboard", data, sid)
 
 
 @sio.on("fruum:optimize")

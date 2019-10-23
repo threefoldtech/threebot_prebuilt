@@ -1,11 +1,11 @@
 {
-    "name": "TODO",
-    "description": "TODO",
+    "name": "blog",
+    "description": "threebot blog package",
     "version": "0.0.1",
     "scripts": {
         "dev": "sapper dev",
         "build": "sapper build --legacy",
-        "export": "sapper export --legacy",
+        "export": "sapper export --legacy --basepath blog",
         "start": "node __sapper__/build",
         "cy:run": "cypress run",
         "cy:open": "cypress open",

@@ -1,0 +1,81 @@
+/* your styles go here */
+.hero {
+  height: 550px;
+}
+footer.main-footer {
+  padding: 30px 0 0;
+}
+
+section {
+  padding: 50px 0;
+}
+
+ul li.list-results {
+  display: block;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+ul li {
+  display: inline-block;
+  margin-right: 10px;
+}
+ul li i {
+  padding: 1px 3px;
+  border-radius: 5px;
+}
+.fa-facebook {
+  color: #3b5998;
+}
+
+.fa-github {
+  color: #333;
+}
+
+.fa-instagram {
+  color: #fff;
+  background: linear-gradient(
+    45deg,
+    #405de6,
+    #5851db,
+    #833ab4,
+    #c13584,
+    #e1306c,
+    #fd1d1d
+  );
+}
+.fa-twitter {
+  color: #1da1f2;
+}
+
+.fadeIn {
+  animation: fadeIn 1s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fadeOut {
+  animation: fadeOut 1s;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

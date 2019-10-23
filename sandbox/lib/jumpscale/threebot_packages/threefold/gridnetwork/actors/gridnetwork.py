@@ -89,7 +89,10 @@ class gridnetwork(j.baseclasses.threebot_actor):
 
         endpoints = []
         for memberid in network.members:
-            member = j.tools.wireguard.get_by_id(memberid)
+            try:
+                member = j.tools.wireguard.get_by_id(memberid)
+            except:
+                continue
             if member.network_public:
                 endpoints.append(member)
 
@@ -131,7 +134,10 @@ class gridnetwork(j.baseclasses.threebot_actor):
         subnet = netaddr.IPNetwork(network.subnet)
         usedips = []
         for memberid in network.members:
-            member = j.tools.wireguard.get_by_id(memberid)
+            try:
+                member = j.tools.wireguard.get_by_id(memberid)
+            except:
+                continue
             usedips.append(netaddr.IPNetwork(member.network_private).ip)
 
         newip = netaddr.IPAddress(subnet.first + 1)
@@ -160,8 +166,13 @@ class gridnetwork(j.baseclasses.threebot_actor):
 
         subnet = netaddr.IPNetwork(network.subnet)
         endpoints = []
-        for memberid in network.members:
-            member = j.tools.wireguard.get_by_id(memberid)
+        for memberid in network.members[:]:
+            try:
+                member = j.tools.wireguard.get_by_id(memberid)
+            except:
+                network.members.remove(memberid)
+                continue
+
             if member.network_public:
                 endpoints.append(member)
             usedips.append(netaddr.IPNetwork(member.network_private).ip)
@@ -176,7 +187,7 @@ class gridnetwork(j.baseclasses.threebot_actor):
         out = schema_out.new()
         out.network_private = f"{newip}/{subnet.prefixlen}"
 
-        peer = j.tools.wireguard.new(name=f"{networkname}-{peername}")
+        peer = j.tools.wireguard.get(name=f"{networkname}-{peername}")
         peer.key_public = publickey
         peer.network_private = out.network_private
         peer.save()
@@ -210,8 +221,12 @@ class gridnetwork(j.baseclasses.threebot_actor):
         network = self._network_get(networkname)
         endpoints = []
         neededmember = None
-        for memberid in network.members:
-            member = j.tools.wireguard.get_by_id(memberid)
+        for memberid in network.members[:]:
+            try:
+                member = j.tools.wireguard.get_by_id(memberid)
+            except:
+                network.members.remove(memberid)
+                continue
             if member.network_public:
                 endpoints.append(member)
             if member.name == fullname:

@@ -47,27 +47,42 @@ def main(self):
     container_model = bcdb.model_get(url="tfgrid.reservation.container.1")
     volume_model = bcdb.model_get(url="tfgrid.reservation.volume.1")
     zdb_model = bcdb.model_get(url="tfgrid.reservation.zdb.1")
+    network_model = bcdb.model_get(url="tfgrid.reservation.network.1")
+    net_resource = bcdb.model_get(url="tfgrid.network.net_resource.1")
 
     # create container
     container = container_model.new()
-    container.node_id = 1
+    container.node_id = "1"
     container.workload_id = 2
     container.farmer_tid = tbots["farmer"].id
     # create volume
     volume = volume_model.new()
-    volume.node_id = 1
+    volume.node_id = "1"
     volume.workload_id = 1
     volume.farmer_tid = tbots["farmer"].id
     # create zdb
     zdb = zdb_model.new()
-    zdb.node_id = 2
+    zdb.node_id = "2"
     zdb.workload_id = 3
     zdb.farmer_tid = tbots["farmer"].id
+
+    # create network
+    network = network_model.new()
+    network.workload_id = 4
+    network.farmer_tid = tbots["farmer"].id
+
+    resource_one = net_resource.new()
+    resource_one.node_id = "1"
+
+    resource_two = net_resource.new()
+    resource_two.node_id = "3"
+    network.network_resources = [resource_one, resource_two]
 
     # add workloads to reservation
     reservation.data_reservation.containers.append(container)
     reservation.data_reservation.volumes.append(volume)
     reservation.data_reservation.zdbs.append(zdb)
+    reservation.data_reservation.networks.append(network)
 
     # create sigining request
     request_model = bcdb.model_get(url="tfgrid.reservation.signing.request.1")
@@ -96,11 +111,14 @@ def main(self):
     reservations = cl.actors.workload_manager.reservations_list().reservations
     assert len(reservations) == 1
 
-    reservations = cl.actors.workload_manager.reservations_list(node_id=1).reservations
+    reservations = cl.actors.workload_manager.reservations_list(node_id="1").reservations
     assert len(reservations) == 1
 
-    reservations = cl.actors.workload_manager.reservations_list(node_id=3).reservations
-    assert len(reservations) == 0
+    reservations = cl.actors.workload_manager.reservations_list(node_id="2").reservations
+    assert len(reservations) == 1
+
+    reservations = cl.actors.workload_manager.reservations_list(node_id="3").reservations
+    assert len(reservations) == 1
 
     reservations = cl.actors.workload_manager.reservations_list(epoch=j.data.time.epoch + 1000).reservations
     assert len(reservations) == 0
@@ -125,14 +143,17 @@ def main(self):
     assert reservation.next_action == "DEPLOY"
 
     # TEST07: LIST WORKLOADS
-    workloads = cl.actors.workload_manager.workloads_list(node_id=1).workloads
-    assert len(workloads) == 2
+    workloads = cl.actors.workload_manager.workloads_list(node_id="1").workloads
+    assert len(workloads) == 3
+    assert [workload.type for workload in workloads] == ["volume", "container", "network"]
 
-    workloads = cl.actors.workload_manager.workloads_list(node_id=2).workloads
+    workloads = cl.actors.workload_manager.workloads_list(node_id="2").workloads
     assert len(workloads) == 1
+    assert [workload.type for workload in workloads] == ["zdb"]
 
-    workloads = cl.actors.workload_manager.workloads_list(node_id=3).workloads
-    assert len(workloads) == 0
+    workloads = cl.actors.workload_manager.workloads_list(node_id="3").workloads
+    assert len(workloads) == 1
+    assert [workload.type for workload in workloads] == ["network"]
 
     # TEST08: FILL SING DELETE
     signature = signer_signing_key.sign(reservation.json.encode())

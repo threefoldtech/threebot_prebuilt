@@ -26,7 +26,7 @@
         <div
           class="navbar-header d-flex align-items-center justify-content-between">
           <!-- Navbar Brand -->
-          <a href="" rel="prefetch" class="navbar-brand">Blog</a>
+          <a href=" " rel="prefetch" class="navbar-brand">Blog</a>
           <!-- Toggle Button-->
           <button
             type="button"

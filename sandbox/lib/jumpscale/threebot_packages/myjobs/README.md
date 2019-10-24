@@ -10,7 +10,7 @@ Job visualizer for myjobs
 - install frontend dependencies `cd jobvis && npm install`
 - build frontend `./build_frontend.sh`
 - execute `kosmos -p 'j.threebot.package.myjobs_dashboard.start()'`
-- server will start at `172.17.0.2`
+- server will start at `https://172.17.0.2/myjobs`
 
 
 ## Package file

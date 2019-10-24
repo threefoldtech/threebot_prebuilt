@@ -28,25 +28,25 @@ class Package(j.baseclasses.threebot_package):
         app = j.threebot.package.wikis.get_app()
         rack.bottle_server_add(name="wikisapp", port=8521, app=app)
 
-        port = 443
-        website = server.get_from_port(port)
-        locations = website.locations.get("main_wiki")
+        for port in [443, 80]:
+            website = server.get_from_port(port)
+            locations = website.locations.get("main_wiki")
 
-        website_location = locations.locations_static.new()
-        website_location.name = "wikistatic"
-        website_location.path_url = "/wikistatic"
-        website_location.path_location = f"{self._dirpath}/static"
-        website_location.use_jumpscale_weblibs = True
+            website_location = locations.locations_static.new()
+            website_location.name = "wikistatic"
+            website_location.path_url = "/wikistatic"
+            website_location.path_location = f"{self._dirpath}/static"
+            website_location.use_jumpscale_weblibs = True
 
-        proxy_location = locations.locations_proxy.new()
-        proxy_location.name = "wikis"
-        proxy_location.path_url = "/wiki"
-        proxy_location.ipaddr_dest = "0.0.0.0"
-        proxy_location.port_dest = 8521
-        proxy_location.scheme = "http"
+            proxy_location = locations.locations_proxy.new()
+            proxy_location.name = "wikis"
+            proxy_location.path_url = "/wiki"
+            proxy_location.ipaddr_dest = "0.0.0.0"
+            proxy_location.port_dest = 8521
+            proxy_location.scheme = "http"
 
-        locations.configure()
-        website.configure()
+            locations.configure()
+            website.configure()
 
     def stop(self):
         """

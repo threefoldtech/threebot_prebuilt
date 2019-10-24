@@ -87,9 +87,7 @@ class OpenRestyServer(j.baseclasses.factory_data):
             # get weblib
             url = "https://github.com/threefoldtech/jumpscale_weblibs"
             weblibs_path = j.clients.git.getContentPathFromURLorPath(url, pull=False)
-            import ipdb
 
-            ipdb.set_trace()
             # copy the templates to the right location
             j.sal.fs.copyDirTree("%s/web_resources/" % self._dirpath, self.path_cfg_dir)
 

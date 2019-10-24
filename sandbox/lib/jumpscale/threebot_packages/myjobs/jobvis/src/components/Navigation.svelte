@@ -26,13 +26,13 @@
       <ul class="navbar-nav mr-auto">
         <li class="nav-item {segment === 'workers' ? 'active' : ''}">
           <a class="nav-link text-white" href="workers">
-            Workers
+            <span>Workers</span>
             <span class="sr-only">(current)</span>
           </a>
         </li>
         <li class="nav-item {segment === 'tasks' ? 'active' : ''}">
           <a class="nav-link text-white" href="tasks">
-            Jobs
+            <span>Jobs</span>
             <span class="sr-only">(current)</span>
           </a>
         </li>

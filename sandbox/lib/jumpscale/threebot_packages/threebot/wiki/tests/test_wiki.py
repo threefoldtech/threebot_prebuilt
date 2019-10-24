@@ -14,9 +14,8 @@ class Wiki(TestCase):
     def info(message):
         LOGGER.info(message)
 
-    @classmethod
-    def setUpClass(cls):
-        cls.gedis = j.servers.threebot.local_start_default()
+    def setUp(self):
+        self.gedis = j.servers.threebot.local_start_default(timeout=300)
 
     @classmethod
     def tearDownClass(cls):
@@ -96,7 +95,7 @@ class Wiki(TestCase):
         self.info("Running bottle web server test")
         j.servers.bottle_web.test()
 
-    def test007_check_wiki_is_loaded(self):
+    def test007_check_wiki_is_loaded_in_bcdbfs(self):
         """
         Test case for checking wiki is loaded.
 
@@ -145,6 +144,7 @@ class Wiki(TestCase):
         self.info("Check the wikis is loaded, should be found.")
         r = requests.get("https://127.0.0.1/web/bcdbfs/docsites/test_example/test_include.md", verify=False)
         self.assertEqual(r.status_code, 200)
+        self.assertIn("includes 1", r.content.decode())
 
         self.info("Remove the added test wiki.")
         j.sal.bcdbfs.dir_remove("/docsites/test_example")

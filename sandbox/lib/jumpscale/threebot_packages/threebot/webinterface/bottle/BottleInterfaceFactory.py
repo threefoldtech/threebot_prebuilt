@@ -121,21 +121,29 @@ class BottleInterfaceFactory(j.baseclasses.object, j.baseclasses.testtools):
     def get_app(self):
         return app
 
-    def test(self, port=None, prefix=None, scheme="http"):
+    def test(self, port=None, prefix="web", scheme="https"):
         """
         kosmos `j.servers.bottle_web.test()'
         :return:
         """
-        base_url = f"{scheme}://0.0.0.0"
+        base_url = "0.0.0.0"
         if port:
             base_url = base_url + f":{port}"
 
         if prefix:
             base_url = base_url + f"/{prefix}"
 
+        url = f"{scheme}://{base_url}"
+
+        gedis_client = j.servers.threebot.local_start_default(timeout=300)
+        gedis_client.actors.package_manager.package_add(
+            "/sandbox/code/github/threefoldtech/jumpscaleX_core/JumpscaleCore/servers/gedis/pytests/test_package"
+        )
+        gedis_client.reload()
+
         print("testing bcdbfs")
         j.sal.bcdbfs.file_write("/test", "hello world", create=True, append=False)
-        assert j.clients.http.get(f"{base_url}/bcdbfs/test") == "hello world"
+        assert j.clients.http.get(f"{url}/bcdbfs/test", verify=False) == "hello world"
         print("bcdbfs OK")
 
         print("testing gedis http")
@@ -143,29 +151,36 @@ class BottleInterfaceFactory(j.baseclasses.object, j.baseclasses.testtools):
         # TODO: check also the content
         assert (
             j.clients.http.post(
-                f"{base_url}/gedis/http/echo/echo",
-                data=b'{"args":{"message":"hello world"}}',
+                f"{url}/gedis/http/actor/echo",
+                data=b'{"args":{"_input":"hello world"}}',
                 headers={"Content-Type": "application/json"},
+                verify=False,
             )
             .read()
             .decode()
             == "hello world"
         )
         print("gedis http OK")
+
         print("testing gedis websocker")
         from websocket import WebSocket
+        import ssl
 
-        ws = WebSocket()
-        ws.connect(f"{base_url}/gedis/websocket")
-
+        ws = WebSocket(sslopt={"cert_reqs": ssl.CERT_NONE})
+        ws.connect(f"wss://{base_url}/gedis/websocket")
         assert ws.connected
+
         payload = """{
         "namespace": "default",
         "actor": "echo",
-        "command": "echo.echo",
-        "args": {"message": "hello world"},
+        "command": "actor.echo",
+        "args": {"_input": "hello world"},
         "headers": {"response_type":"json"}
         }"""
         ws.send(payload)
         assert ws.recv() == "hello world"
         print("gedis websocket OK")
+
+        print("tearDown")
+        gedis_client.actors.package_manager.package_delete("test_package")
+        j.servers.threebot.default.stop()

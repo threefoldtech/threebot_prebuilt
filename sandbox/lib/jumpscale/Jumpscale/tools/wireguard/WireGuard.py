@@ -56,7 +56,7 @@ class WireGuard(j.baseclasses.object_config):
             if self.islocal:
                 self._executor = j.tools.executorLocal
             else:
-                self._executor = j.tools.executor.ssh_get(self.sshclient_name)
+                self._executor = j.clients.ssh.get(self.sshclient_name, client_type="pssh", autosave=False).executor
         return self._executor
 
     def install(self):
@@ -118,7 +118,7 @@ class WireGuard(j.baseclasses.object_config):
             if peerobject.network_public:
                 peer["EndPoint"] = f"{peerobject.network_public}:{peerobject.port}"
                 peer["PersistentKeepalive"] = "25"
-                peer["AllowedIPs"] = f"{subnet.network}/{subnet.prefixlen}"
+                peer["AllowedIPs"] = f"{subnet.network}/{subnet.prefixlen},{subnet.ip}/32"
             else:
                 peer["AllowedIPs"] = f"{subnet.ip}"
             config += to_section("Peer", peer)
@@ -128,8 +128,8 @@ class WireGuard(j.baseclasses.object_config):
         rc, output, _ = self.executor.execute(f"ip a s dev {self.interface_name}", die=False)
         up = False
         if rc == 0:
-            info = j.sal.nettools.networkinfo_parse_ip(output)[0]
-            if info["ip"][0] != self.network_private.split("/")[0]:
+            info = j.sal.nettools.networkinfo_parse_ip(output)
+            if not info or not info[0]["ip"] or info[0]["ip"][0] != self.network_private.split("/")[0]:
                 self.executor.execute(f"ip l d {self.interface_name}")
                 up = True
         else:

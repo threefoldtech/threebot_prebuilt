@@ -1,0 +1,3 @@
+#!/bin/sh
+unset LUA_PATH LUA_PATH_5_2 LUA_PATH_5_3 LUA_PATH_5_4
+LUAROCKS_SYSCONFDIR="/sandbox/openresty/luarocks/etc/luarocks" LUA_PATH="/tmp/builders/lua/luarocks/src/?.lua;;" exec "/sandbox/openresty/luajit/bin/luajit" "/tmp/builders/lua/luarocks/src/bin/luarocks" --project-tree="/tmp/builders/lua/luarocks/lua_modules" "$@"

@@ -1100,6 +1100,7 @@ class group_j__clients(JSGroup):
         self._git = None
         self._peewee = None
         self._gedis_backend = None
+        self._site_providers = None
         self._zdb = None
         self._ssh = None
         self._sshkey = None
@@ -1271,6 +1272,12 @@ class group_j__clients(JSGroup):
             from Jumpscale.clients.gedis_backends.GedisBackendClientFactory import GedisBackendClientFactory
             self._gedis_backend =  GedisBackendClientFactory()
         return self._gedis_backend
+    @property
+    def site_providers(self):
+        if self._site_providers is None:
+            from Jumpscale.clients.site_providers.SiteProvidersFactory import SiteProvidersFactory
+            self._site_providers =  SiteProvidersFactory()
+        return self._site_providers
     @property
     def zdb(self):
         if self._zdb is None:

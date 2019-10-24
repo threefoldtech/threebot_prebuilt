@@ -12,7 +12,7 @@ class Package(j.baseclasses.threebot_package):
         """
         # write 4 apps to database
         bcdb = j.data.bcdb.get("appstore")
-        appModel = bcdb.model_get(url="appstore.app")
+        appModel = bcdb.model_get(url="appstore.app.1")
 
         appsList = [
             {

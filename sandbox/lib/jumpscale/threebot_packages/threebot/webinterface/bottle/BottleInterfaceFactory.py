@@ -66,7 +66,7 @@ def gedis_websocket(ws):
 #######################################
 ######## GEDIS HTTP ROUTES ############
 #######################################
-@app.route("/gedis/http/<name>/<cmd>", method="post")
+@app.route("/gedis/http/<name>/<cmd>", method=["post", "get"])
 @enable_cors
 def gedis_http(name, cmd):
     client = j.clients.gedis.get(name="main_gedis_threebot", port=8901)

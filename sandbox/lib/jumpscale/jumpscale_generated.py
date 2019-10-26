@@ -2813,6 +2813,7 @@ class group_j__threebot__package(JSGroup):
         self._alerta = None
         self._ibiza = None
         self._helloworld = None
+        self._vuejs = None
         self._pastebin = None
         self._workloadmanager = None
         self._humanitypoll = None
@@ -2871,6 +2872,12 @@ class group_j__threebot__package(JSGroup):
             from threebot_packages.examples.helloworld.HelloWorldFactory import HelloWorldFactory
             self._helloworld =  HelloWorldFactory()
         return self._helloworld
+    @property
+    def vuejs(self):
+        if self._vuejs is None:
+            from threebot_packages.examples.vuejs.VueJSFactory import VueJSFactory
+            self._vuejs =  VueJSFactory()
+        return self._vuejs
     @property
     def pastebin(self):
         if self._pastebin is None:

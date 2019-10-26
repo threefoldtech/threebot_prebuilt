@@ -48,7 +48,7 @@ class BuilderThreebot(j.baseclasses.builder):
         j.builders.db.zdb.sandbox(reset=reset_deps)
 
         j.builders.apps.sonic.sandbox(reset=reset_deps)
-        j.builders.runtimes.python3.sandbox(reset=reset_deps)
+
         url = "https://github.com/threefoldtech/jumpscale_weblibs"
         weblibs_path = j.clients.git.getContentPathFromURLorPath(url, pull=False)
 
@@ -63,7 +63,6 @@ class BuilderThreebot(j.baseclasses.builder):
         self.tools.copyTree(j.builders.web.openresty.DIR_SANDBOX, self.DIR_SANDBOX)
         self.tools.copyTree(j.builders.db.zdb.DIR_SANDBOX, self.DIR_SANDBOX)
         self.tools.copyTree(j.builders.apps.sonic.DIR_SANDBOX, self.DIR_SANDBOX)
-        self.tools.copyTree(j.builders.runtimes.python3.DIR_SANDBOX, self.DIR_SANDBOX)
 
         script = """
         rsync -rav /sandbox/code/github/threefoldtech/jumpscaleX_core/sandbox/cfg/ {DIR_SANDBOX}/sandbox/cfg/
@@ -125,6 +124,7 @@ class BuilderThreebot(j.baseclasses.builder):
         self.tools.copyTree("/etc/resty-auto-ssl", self.DIR_SANDBOX + "/etc/resty-auto-ssl")
         self.tools.copyTree("/sandbox/bin", self.DIR_SANDBOX + "/sandbox/bin",ignoredir=[".git"])
         self.tools.copyTree("/sandbox/lib", self.DIR_SANDBOX + "/sandbox/lib",ignoredir=[".git"])
+        self.tools.copyTree("/usr/local/lib/python3.6", self.DIR_SANDBOX + "/usr/local/lib/python3.6",ignoredir=[".git"])
         
         file = self.tools.joinpaths(j.sal.fs.getDirName(__file__), "templates", "threebot_startup.toml")
         file_dest = self.tools.joinpaths(self.DIR_SANDBOX, ".startup.toml")

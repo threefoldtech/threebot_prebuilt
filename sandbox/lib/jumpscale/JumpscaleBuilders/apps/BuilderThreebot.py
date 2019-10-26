@@ -48,7 +48,7 @@ class BuilderThreebot(j.baseclasses.builder):
         j.builders.db.zdb.sandbox(reset=reset_deps)
 
         j.builders.apps.sonic.sandbox(reset=reset_deps)
-
+        j.builders.runtimes.python3.sandbox(reset=reset_deps)
         url = "https://github.com/threefoldtech/jumpscale_weblibs"
         weblibs_path = j.clients.git.getContentPathFromURLorPath(url, pull=False)
 

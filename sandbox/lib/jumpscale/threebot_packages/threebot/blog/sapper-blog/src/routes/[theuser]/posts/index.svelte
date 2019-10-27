@@ -1,13 +1,30 @@
 <script context="module">
+  import axios from "axios";
+  axios.defaults.headers.post["Content-Type"] = "application/json";
+
+  const BLOG_API = "/web/gedis/http/blog";
+  export async function callActorWithArgs(actorCmd, actorArgs) {
+    let p = () =>
+      axios.post(`${BLOG_API}/${actorCmd}`, {
+        args: actorArgs
+      });
+
+    let resp = await p();
+    return new Promise((resolve, reject) => resolve(resp.data));
+  }
+
   export async function preload({ host, path, params, query }) {
     console.log("params in posts index", JSON.stringify(params));
+
+    let blogName = params.theuser;
+    // const pagesResp = await callActorWithArgs("get_pages", {
+    //   blog_name: blogName
+    // });
 
     let pageNum = parseInt(query.page);
     if (!pageNum) {
       this.redirect(302, `${params.theuser}/posts?page=1`);
     }
-
-    let resp = await this.fetch(`${params.theuser}/posts.json`);
 
     // please notice it might be undefined
     // parseInt(undefined) > 0 -> false
@@ -18,12 +35,16 @@
       pageNum--;
     }
 
-    let allPosts = await resp.json();
+    let allPosts = await await callActorWithArgs("get_posts", {
+      blog_name: blogName
+    });
+
     console.log(allPosts.length);
     // console.log("parsed blogs ", allPosts);
     let totalPostsLength = allPosts.length;
-    const metaResp = await this.fetch(`${params.theuser}/metadata.json`);
-    const metadata = await metaResp.json();
+    const metadata = await await callActorWithArgs("get_metadata", {
+      blog_name: blogName
+    });
 
     let per_page = metadata.posts_per_page || 5;
     let begin = pageNum * per_page;

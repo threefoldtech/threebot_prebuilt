@@ -2816,17 +2816,18 @@ class group_j__threebot__package(JSGroup):
         self._vuejs = None
         self._pastebin = None
         self._workloadmanager = None
+        self._namemanager = None
         self._humanitypoll = None
         self._grid_network = None
         self._threefold_wikis = None
         self._phonebook = None
+        self._provisioning_bot = None
         self._freeflownation = None
         self._threefold_io = None
         self._tftexplorer = None
         self._token = None
         self._directory = None
         self._fileserver = None
-        self._namemanager = None
         self._webinterface = None
         self._ffmainapp = None
         self._contacts = None
@@ -2835,6 +2836,7 @@ class group_j__threebot__package(JSGroup):
         self._webhooks = None
         self._blogs = None
         self._chat = None
+        self._registration = None
         self._calendar = None
         self._wikis = None
         self._appstore2 = None
@@ -2847,7 +2849,6 @@ class group_j__threebot__package(JSGroup):
         self._minercraft = None
         self._taiga = None
         self._fruum = None
-        self._provisioning_bot = None
         self._myjobs_dashboard = None
 
     
@@ -2891,6 +2892,12 @@ class group_j__threebot__package(JSGroup):
             self._workloadmanager =  WorkloadManagerFactory()
         return self._workloadmanager
     @property
+    def namemanager(self):
+        if self._namemanager is None:
+            from threebot_packages.threefold.namemanager.NameManagerFactory import NameServiceFactory
+            self._namemanager =  NameServiceFactory()
+        return self._namemanager
+    @property
     def humanitypoll(self):
         if self._humanitypoll is None:
             from threebot_packages.threefold.humanitypoll.HumanityPollFactory import HumanityPollFactory
@@ -2914,6 +2921,12 @@ class group_j__threebot__package(JSGroup):
             from threebot_packages.threefold.phonebook.TFPhonebookFactory import TFPhonebookFactory
             self._phonebook =  TFPhonebookFactory()
         return self._phonebook
+    @property
+    def provisioning_bot(self):
+        if self._provisioning_bot is None:
+            from threebot_packages.threefold.provisioning.ProvisioningFactory import ProvisioningFactory
+            self._provisioning_bot =  ProvisioningFactory()
+        return self._provisioning_bot
     @property
     def freeflownation(self):
         if self._freeflownation is None:
@@ -2950,12 +2963,6 @@ class group_j__threebot__package(JSGroup):
             from threebot_packages.threebot.fileserver.TBOTFileServerFactory import TBOTFileServerFactory
             self._fileserver =  TBOTFileServerFactory()
         return self._fileserver
-    @property
-    def namemanager(self):
-        if self._namemanager is None:
-            from threebot_packages.threebot.namemanager.NameManagerFactory import NameServiceFactory
-            self._namemanager =  NameServiceFactory()
-        return self._namemanager
     @property
     def webinterface(self):
         if self._webinterface is None:
@@ -3004,6 +3011,12 @@ class group_j__threebot__package(JSGroup):
             from threebot_packages.threebot.chat.ChatFactory import ChatFactory
             self._chat =  ChatFactory()
         return self._chat
+    @property
+    def registration(self):
+        if self._registration is None:
+            from threebot_packages.threebot.registration.RegistrationFactory import RegistrationFactory
+            self._registration =  RegistrationFactory()
+        return self._registration
     @property
     def calendar(self):
         if self._calendar is None:
@@ -3076,12 +3089,6 @@ class group_j__threebot__package(JSGroup):
             from threebot_packages.fruum.FruumFactory import FruumFactory
             self._fruum =  FruumFactory()
         return self._fruum
-    @property
-    def provisioning_bot(self):
-        if self._provisioning_bot is None:
-            from threebot_packages.threebot_provisioning.ProvisioningFactory import ProvisioningFactory
-            self._provisioning_bot =  ProvisioningFactory()
-        return self._provisioning_bot
     @property
     def myjobs_dashboard(self):
         if self._myjobs_dashboard is None:

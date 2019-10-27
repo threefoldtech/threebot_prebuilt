@@ -59,7 +59,7 @@ class calendar(j.baseclasses.threebot_actor):
         c.color = calendar.color
         c.description = calendar.description
         props = j.data.serializers.json.loads(c.props)
-        props['C:calendar-description'] = calendar.description
+        props["C:calendar-description"] = calendar.description
         props["ICAL:calendar-color"] = calendar.color
         c.props = j.data.serializers.json.dumps(props)
         c.save()
@@ -199,7 +199,7 @@ class calendar(j.baseclasses.threebot_actor):
         self._verify_client()
         calendar = self._get_calendar(calendar_id)
         try:
-            event = calendar.event_by_uid(event_id.replace('.ics', ''))
+            event = calendar.event_by_uid(event_id.replace(".ics", ""))
             event.delete()
         except caldav.error.NotFoundError:
             pass
@@ -221,18 +221,18 @@ class calendar(j.baseclasses.threebot_actor):
 
         # timezone does npt exist (None) or wrong
         try:
-            timezone = vobject.icalendar.getTzid(event.timezone or 'UTC')
+            timezone = vobject.icalendar.getTzid(event.timezone or "UTC")
         except:
             raise j.exceptions.NotFound(f"wrong time zone: {event.timezone}")
 
         try:
-            e = calendar.event_by_uid(event.item_id.replace('.ics', ''))
+            e = calendar.event_by_uid(event.item_id.replace(".ics", ""))
         except caldav.error.NotFoundError:
             raise j.exceptions.NotFound(f"Couldn't find event with uid: {event.item_id}")
         event_obj = vobject.readOne(e.data)
         for prop in props:
-            if prop == 'summary':
-                value = getattr(event, 'title', None)
+            if prop == "summary":
+                value = getattr(event, "title", None)
             else:
                 value = getattr(event, prop, None)
             if value:

@@ -46,7 +46,7 @@
 
       <img
         src={post_image_link}
-        onerror="this.src = 'img/blog-post-1.jpeg"
+        onerror="this.src='img/blog-post-1.jpeg'"
         alt="..."
         class="img-fluid"
         style="max-height: 200px;" />

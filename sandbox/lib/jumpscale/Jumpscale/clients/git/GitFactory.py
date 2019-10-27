@@ -165,6 +165,7 @@ class GitFactory(j.baseclasses.object):
 
         # Add ssh host to the known_hosts file if not exists to skip
         # authenticity prompt
+        import ipdb; ipdb.set_trace()
         if ssh:
             cmd = "grep -q {host} ~/.ssh/known_hosts || ssh-keyscan  -p {port} {host} >> ~/.ssh/known_hosts"
             cmd = cmd.format(host=base, port=port or 22)

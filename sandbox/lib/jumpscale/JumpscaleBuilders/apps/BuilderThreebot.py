@@ -63,6 +63,7 @@ class BuilderThreebot(j.baseclasses.builder):
         self.tools.copyTree(j.builders.web.openresty.DIR_SANDBOX, self.DIR_SANDBOX)
         self.tools.copyTree(j.builders.db.zdb.DIR_SANDBOX, self.DIR_SANDBOX)
         self.tools.copyTree(j.builders.apps.sonic.DIR_SANDBOX, self.DIR_SANDBOX)
+        self.tools.copyTree(j.builders.runtimes.python3.DIR_SANDBOX, self.DIR_SANDBOX)
 
         script = """
         rsync -rav /sandbox/code/github/threefoldtech/jumpscaleX_core/sandbox/cfg/ {DIR_SANDBOX}/sandbox/cfg/

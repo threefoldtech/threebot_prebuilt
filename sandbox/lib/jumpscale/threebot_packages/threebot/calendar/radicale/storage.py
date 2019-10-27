@@ -693,7 +693,6 @@ class Database:
     contact_model = bcdb.model_get(url="tf.caldav.contact.1")
     attachment_model = bcdb.model_get(url="tf.caldav.attachment.1")
 
-
     @classmethod
     def find_collections(cls, collection_id, user_id):
         calendars = cls.calendar_model.find(calendar_id=collection_id, user_id=user_id)
@@ -720,7 +719,7 @@ class Database:
         if not collections:
             return []
         collection = collections[0]
-        if collection.type == 'calendar':
+        if collection.type == "calendar":
             return cls.event_model.find(item_id=item_id, calendar_id=collection_id, user_id=user_id)
         return cls.contact_model.find(item_id=item_id, addressbook_id=collection_id, user_id=user_id)
 
@@ -807,9 +806,11 @@ class Collection(BaseCollection):
                 yield collection.get(href)
         # get all collections for a user
         self = cls(sane_path)
-        collections = Database.calendar_model.find(user_id=self.user_id) + Database.addressbook_model.find(user_id=self.user_id)
+        collections = Database.calendar_model.find(user_id=self.user_id) + Database.addressbook_model.find(
+            user_id=self.user_id
+        )
         for collection in collections:
-            if collection.type == 'calendar':
+            if collection.type == "calendar":
                 yield cls("/{}/{}".format(collection.user_id, collection.calendar_id))
             else:
                 yield cls("/{}/{}".format(collection.user_id, collection.addressbook_id))
@@ -864,10 +865,10 @@ class Collection(BaseCollection):
             col.calendar_id = self.collection_id
             col.save()
         elif props.get("tag") == "VADDRESSBOOK":
-                col = Database.addressbook_model.new()
-                col.user_id = self.user_id
-                col.addressbook_id = self.collection_id
-                col.save()
+            col = Database.addressbook_model.new()
+            col.user_id = self.user_id
+            col.addressbook_id = self.collection_id
+            col.save()
 
         self.set_meta_all(props)
 
@@ -923,10 +924,10 @@ class Collection(BaseCollection):
                 item.description = vobject_item.vevent.description.value
                 item.location = vobject_item.vevent.location.value
                 for e in vobject_item.vevent.getChildren():
-                    if e.name == 'ATTACH':
+                    if e.name == "ATTACH":
                         a = Database.attachment_model.new()
-                        a.name = e.params['FILENAME'].replace("['", '').replace("']", '')
-                        a.encoding = e.params['ENCODING'].replace("['", '').replace("']", '').lower()
+                        a.name = e.params["FILENAME"].replace("['", "").replace("']", "")
+                        a.encoding = e.params["ENCODING"].replace("['", "").replace("']", "").lower()
                         a.content = e.value
                         a.save()
             else:
@@ -1049,10 +1050,10 @@ class Collection(BaseCollection):
             item.location = vobject_item.vevent.location.value
 
             for e in vobject_item.vevent.getChildren():
-                if e.name == 'ATTACH':
+                if e.name == "ATTACH":
                     a = Database.attachment_model.new()
-                    a.name = e.params['FILENAME'].replace("['", '').replace("']", '')
-                    a.encoding = e.params['ENCODING'].replace("['", '').replace("']", '').lower()
+                    a.name = e.params["FILENAME"].replace("['", "").replace("']", "")
+                    a.encoding = e.params["ENCODING"].replace("['", "").replace("']", "").lower()
                     a.content = e.value
                     a.save()
 

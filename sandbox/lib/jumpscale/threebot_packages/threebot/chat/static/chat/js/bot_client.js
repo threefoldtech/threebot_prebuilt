@@ -112,7 +112,7 @@ var mdContentGenerate = function (message, kwargs) {
         tablesHeaderId: "table"
     });
     const htmlContents = converter.makeHtml(message);
-    return `${htmlContents}`;
+    return htmlContents;
 }
 
 var multiChoiceGenerate = function (message, options, kwargs) {
@@ -176,12 +176,12 @@ var dropDownChoiceGenerate = function (message, options, kwargs) {
 }
 
 var generateSlide = function (res) {
-    $("#spinner").toggle();
+    $("#spinner").hide();
     // if error: leave the old slide and show the error
     if (res["error"]) {
         $("#error").html(res['error']);
         $(".btn-submit").attr("disabled", "false");
-        $(".form-box").toggle({
+        $(".form-box").hide({
             "duration": 400
         });
         return
@@ -191,6 +191,29 @@ var generateSlide = function (res) {
         $(location).attr("href", res["msg"]);
         return
     }
+
+    function next(value, spinner) {
+        $("#error").addClass("hidden");
+        $(this).attr("disabled", "disabled");
+        if (spinner) {
+            $("#spinner").show();
+            $(".form-box").show({
+                "duration": 400
+            });
+        }
+        EXEC_OBJ['command'] = "work_report";
+        EXEC_OBJ['args']['result'] = value;
+        GEDIS_CLIENT.execute(EXEC_OBJ).then(function (res) {
+            EXEC_OBJ['command'] = "work_get";
+            delete EXEC_OBJ['args']['result'];
+            // Ignore work_report response and wait for getting next question
+            GEDIS_CLIENT.execute(EXEC_OBJ).then(function (res) {
+                res = JSON.parse(res);
+                generateSlide(res);
+            });
+        });
+    }
+
     let contents = "";
     switch (res['cat']) {
         case "string_ask":
@@ -209,6 +232,9 @@ var generateSlide = function (res) {
             contents = captchaContentGenerate(res['msg'], res['captcha'], res['label'], res['kwargs']);
             break;
         case "md_show":
+            contents = mdContentGenerate(res['msg'], res['kwargs']);
+            break;
+        case "md_show_update":
             contents = mdContentGenerate(res['msg'], res['kwargs']);
             break;
         case "multi_choice":
@@ -233,9 +259,14 @@ var generateSlide = function (res) {
 			</span>
 		</fieldset>`;
     $("#wizard").html(contents);
-    $(".form-box").toggle({
+    $(".form-box").show({
         "duration": 400
     });
+    if (res['cat'] == "md_show_update") {
+        $(".btn-submit").html("<i class='fa fa-spinner fa-spin '></i>");
+        $(".btn-submit").attr("disabled", "disabled");
+        return next("");
+    }
 
     $(".btn-submit").on("click", function (ev) {
         ev.preventDefault();
@@ -262,23 +293,7 @@ var generateSlide = function (res) {
             $("#error").removeClass("hidden");
             return
         }
-        $("#error").addClass("hidden");
-        $(this).attr("disabled", "disabled");
-        $("#spinner").toggle();
-        $(".form-box").toggle({
-            "duration": 400
-        });
-        EXEC_OBJ['command'] = "work_report";
-        EXEC_OBJ['args']['result'] = value;
-        GEDIS_CLIENT.execute(EXEC_OBJ).then(function (res) {
-            EXEC_OBJ['command'] = "work_get";
-            delete EXEC_OBJ['args']['result'];
-            // Ignore work_report response and wait for getting next question
-            GEDIS_CLIENT.execute(EXEC_OBJ).then(function (res) {
-                res = JSON.parse(res);
-                generateSlide(res);
-            });
-        });
+        next(value, true);
     });
 }
 

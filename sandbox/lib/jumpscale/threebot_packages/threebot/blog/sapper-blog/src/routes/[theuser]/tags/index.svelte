@@ -1,16 +1,27 @@
 <script context="module">
-  export function preload({ params, query }) {
-    return this.fetch(`${params.theuser}/tags.json`)
-      .then(r => r.json())
-      .then(tags => {
-        return { tags };
-      });
-  }
-</script>
+  import axios from "axios";
 
-<script>
+  axios.defaults.headers.post["Content-Type"] = "application/json";
   import TagList from "../../../components/TagList.svelte";
   export let tags = [];
+  const BLOG_API = "/web/gedis/http/blog";
+  export async function callActorWithArgs(actorCmd, actorArgs) {
+    let p = () =>
+      axios.post(`${BLOG_API}/${actorCmd}`, {
+        args: actorArgs
+      });
+
+    let resp = await p();
+    return new Promise((resolve, reject) => resolve(resp.data));
+  }
+
+  export async function preload({ params, query }) {
+    let blogName = params.theuser;
+    tags = await callActorWithArgs("get_tags", {
+      blog_name: blogName
+    });
+    return { tags };
+  }
 </script>
 
 <style>

@@ -115,7 +115,6 @@ class BuilderPython(j.baseclasses.builder):
         """
         kosmos 'j.builders.runtimes.python3._pip_packages_all()'
         """
-        j.builders.libs.capnp.install(reset=True)
         # list comes from /sandbox/code/github/threefoldtech/jumpscale_core/install/InstallTools.py
         self.pip_package_install(j.core.installer_base.pips_list(0))
 

@@ -1,11 +1,24 @@
 <script context="module">
-  export function preload({ params, query }) {
-    return this.fetch(`${params.theuser}/pages.json`)
-      .then(r => r.json())
-      .then(pages => {
-        console.log(params);
-        return { pages };
+  import axios from "axios";
+  axios.defaults.headers.post["Content-Type"] = "application/json";
+
+  const BLOG_API = "/web/gedis/http/blog";
+  export async function callActorWithArgs(actorCmd, actorArgs) {
+    let p = () =>
+      axios.post(`${BLOG_API}/${actorCmd}`, {
+        args: actorArgs
       });
+
+    let resp = await p();
+    return new Promise((resolve, reject) => resolve(resp.data));
+  }
+
+  export async function preload({ params, query }) {
+    let blogName = params.theuser;
+    let pages = await callActorWithArgs("get_pages", {
+      blog_name: blogName
+    });
+    return { pages };
   }
 </script>
 

@@ -37,7 +37,7 @@
   <div class="container">
     <div class="post-single">
       <div class="post-thumbnail">
-        <img src="img/blog-post-3.jpeg" alt="..." class="img-fluid" />
+        <img src={post_image_link} alt="..." class="img-fluid" />
       </div>
       <div class="post-details">
         <div class="post-meta d-flex justify-content-between">
@@ -53,8 +53,8 @@
             class="author d-flex align-items-center flex-wrap">
             <div class="avatar">
               <img
-                src={post_image_link}
-                onerror="this.src = img/blog-post-1.jpeg"
+                src={post_author_image_link}
+                onerror="this.src='me.jpg'"
                 alt="..."
                 class="img-fluid" />
             </div>

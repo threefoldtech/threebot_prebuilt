@@ -29,7 +29,7 @@
         <div class="image">
           <img
             src={select_image(post)}
-            onerror="this.src = img/blog-post-1.jpeg"
+            onerror="this.src='img/blog-post-1.jpeg'"
             alt="..."
             class="img-fluid" />
         </div>

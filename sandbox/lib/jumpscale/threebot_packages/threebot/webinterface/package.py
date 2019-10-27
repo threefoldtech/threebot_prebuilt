@@ -42,6 +42,13 @@ class Package(j.baseclasses.threebot_package):
             proxy_location.type = "http"
             proxy_location.scheme = "http"
 
+            url = "https://github.com/threefoldtech/jumpscale_weblibs"
+            weblibs_path = j.clients.git.getContentPathFromURLorPath(url, pull=False)
+            weblibs_location = website.locations.get().locations_static.new()
+            weblibs_location.name = "weblibs"
+            weblibs_location.path_url = "/weblibs"
+            weblibs_location.path_location = f"{weblibs_path}/static"
+
             website.configure()
 
     def start(self):
